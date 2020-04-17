@@ -17,6 +17,12 @@ func (v Vec3f) Vec3i() Vec3i {
 	return Vec3i{int(v[0]), int(v[1]), int(v[2])}
 }
 
+// Round returns an integer representation of the vector.
+// Decimals are rounded.
+func (v Vec3f) Round() Vec3i {
+	return Vec3i{int(Round(v[0])), int(Round(v[1])), int(Round(v[2]))}
+}
+
 // Vec4f creates a 4D vector.
 func (v Vec3f) Vec4f(w float32) Vec4f {
 	return Vec4f{v[0], v[1], v[2], w}
@@ -91,10 +97,13 @@ func (v Vec3f) DivScalar(s float32) Vec3f {
 }
 
 // Normalize the vector. Its length will be 1 afterwards.
-// If the vector is zero, all components will be infinite afterwards.
+// If the vector's length is zero, a zero vector will be returned.
 func (v Vec3f) Normalize() Vec3f {
-	l := 1.0 / v.Length()
-	return Vec3f{v[0] * l, v[1] * l, v[2] * l}
+	length := v.Length()
+	if Equalf(length, 0) {
+		return Vec3f{}
+	}
+	return Vec3f{v[0] / length, v[1] / length, v[2] / length}
 }
 
 // Length returns the vector's length.
@@ -102,8 +111,8 @@ func (v Vec3f) Length() float32 {
 	return Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
 }
 
-// SquareLen returns the vector's squared length.
-func (v Vec3f) SquareLen() float32 {
+// SquareLength returns the vector's squared length.
+func (v Vec3f) SquareLength() float32 {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
 }
 
@@ -129,8 +138,8 @@ func (v Vec3f) Clamp(min, max float32) Vec3f {
 	}
 }
 
-// Invert inverts (negates) all components.
-func (v Vec3f) Invert() Vec3f {
+// Negate inverts all components.
+func (v Vec3f) Negate() Vec3f {
 	return Vec3f{-v[0], -v[1], -v[2]}
 }
 
@@ -150,7 +159,7 @@ func (v Vec3f) Cross(other Vec3f) Vec3f {
 
 // Project returns a vector representing the projection of vector v onto "other".
 func (v Vec3f) Project(other Vec3f) Vec3f {
-	return other.MulScalar(v.Dot(other) / other.SquareLen())
+	return other.MulScalar(v.Dot(other) / other.SquareLength())
 }
 
 // Lerp performs a linear interpolation between two vectors.
@@ -170,4 +179,72 @@ func (v Vec3f) Angle(other Vec3f) float32 {
 	}
 	n := v.Sub(other).Length() / 2
 	return 2.0 * Asin(Min(n, 1))
+}
+
+// RotationTo returns the shortest rotation to the destination vector.
+func (v Vec3f) RotationTo(dest Vec3f) Quat {
+	// Source: http://glmatrix.net/docs/module-quat.html
+
+	v = v.Normalize()
+	dest = dest.Normalize()
+	dot := v.Dot(dest)
+
+	if dot < -1+Epsilon {
+		t := Vec3f{1, 0, 0}.Cross(v)
+		if t.Length() < Epsilon {
+			t = Vec3f{0, 1, 0}.Cross(v)
+		}
+		return QuatFromAxisAngle(t.Normalize(), math.Pi)
+	}
+	if dot > 1-Epsilon {
+		return Quat{1, 0, 0, 0}
+	}
+	t := v.Cross(dest)
+	return Quat{1 + dot, t[0], t[1], t[2]}.Normalize()
+}
+
+// RotateX rotates a point around the X-axis.
+func (v Vec3f) RotateX(origin Vec3f, rad float32) Vec3f {
+	v = v.Sub(origin) // translate to origin
+
+	sin, cos := Sincos(rad)
+	p := Vec3f{
+		v[0],
+		v[1]*cos - v[2]*sin,
+		v[1]*sin + v[2]*cos}
+	return p.Add(origin)
+}
+
+// RotateY rotates a point around the Y-axis.
+func (v Vec3f) RotateY(origin Vec3f, rad float32) Vec3f {
+	v = v.Sub(origin) // translate to origin
+
+	sin, cos := Sincos(rad)
+	p := Vec3f{
+		v[2]*sin + v[0]*cos,
+		v[1],
+		v[2]*cos - v[0]*sin}
+	return p.Add(origin)
+}
+
+// RotateZ rotates a point around the Z-axis.
+func (v Vec3f) RotateZ(origin Vec3f, rad float32) Vec3f {
+	v = v.Sub(origin) // translate to origin
+
+	sin, cos := Sincos(rad)
+	p := Vec3f{
+		v[0]*cos - v[1]*sin,
+		v[0]*sin + v[1]*cos,
+		v[2]}
+	return p.Add(origin)
+}
+
+// Distance returns the euclidean distance to another position.
+func (v Vec3f) Distance(other Vec3f) float32 {
+	return other.Sub(v).Length()
+}
+
+// SquareDistance returns the squared euclidean distance to another position.
+func (v Vec3f) SquareDistance(other Vec3f) float32 {
+	return other.Sub(v).SquareLength()
 }

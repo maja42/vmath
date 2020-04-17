@@ -87,8 +87,8 @@ func (v Vec2i) Length() float32 {
 	return Hypot(float32(v[0]*v[0]), float32(v[1]*v[1]))
 }
 
-// SquareLen returns the vector's squared length.
-func (v Vec2i) SquareLen() int {
+// SquareLength returns the vector's squared length.
+func (v Vec2i) SquareLength() int {
 	return v[0]*v[0] + v[1]*v[1]
 }
 
@@ -105,12 +105,22 @@ func (v Vec2i) Clamp(min, max int) Vec2i {
 	}
 }
 
-// Invert inverts (negates) all components.
-func (v Vec2i) Invert() Vec2i {
+// Negate inverts all components.
+func (v Vec2i) Negate() Vec2i {
 	return Vec2i{-v[0], -v[1]}
 }
 
 // Dot performs a dot product with another vector.
 func (v Vec2i) Dot(other Vec2i) int {
 	return v[0]*other[0] + v[1]*other[1]
+}
+
+// Distance returns the euclidean distance to another position.
+func (v Vec2i) Distance(other Vec2i) float32 {
+	return other.Sub(v).Length()
+}
+
+// SquareDistance returns the squared euclidean distance to another position.
+func (v Vec2i) SquareDistance(other Vec2i) int {
+	return other.Sub(v).SquareLength()
 }

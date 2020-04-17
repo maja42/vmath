@@ -16,6 +16,12 @@ func (v Vec2f) Vec2i() Vec2i {
 	return Vec2i{int(v[0]), int(v[1])}
 }
 
+// Round returns an integer representation of the vector.
+// Decimals are rounded.
+func (v Vec2f) Round() Vec2i {
+	return Vec2i{int(Round(v[0])), int(Round(v[1]))}
+}
+
 // Vec3f creates a 3D vector.
 func (v Vec2f) Vec3f(z float32) Vec3f {
 	return Vec3f{v[0], v[1], z}
@@ -84,10 +90,13 @@ func (v Vec2f) DivScalar(s float32) Vec2f {
 }
 
 // Normalize the vector. Its length will be 1 afterwards.
-// If the vector is zero, all components will be infinite afterwards.
+// If the vector's length is zero, a zero vector will be returned.
 func (v Vec2f) Normalize() Vec2f {
-	l := 1.0 / v.Length()
-	return Vec2f{v[0] * l, v[1] * l}
+	length := v.Length()
+	if Equalf(length, 0) {
+		return Vec2f{}
+	}
+	return Vec2f{v[0] / length, v[1] / length}
 }
 
 // Length returns the vector's length.
@@ -95,8 +104,8 @@ func (v Vec2f) Length() float32 {
 	return Hypot(v[0], v[1])
 }
 
-// SquareLen returns the vector's squared length.
-func (v Vec2f) SquareLen() float32 {
+// SquareLength returns the vector's squared length.
+func (v Vec2f) SquareLength() float32 {
 	return v[0]*v[0] + v[1]*v[1]
 }
 
@@ -119,8 +128,8 @@ func (v Vec2f) Clamp(min, max float32) Vec2f {
 	}
 }
 
-// Invert inverts (negates) all components.
-func (v Vec2f) Invert() Vec2f {
+// Negate inverts all components.
+func (v Vec2f) Negate() Vec2f {
 	return Vec2f{-v[0], -v[1]}
 }
 
@@ -147,7 +156,7 @@ func (v Vec2f) NormalVec(onLeft bool) Vec2f {
 
 // Project returns a vector representing the projection of vector v onto "other".
 func (v Vec2f) Project(other Vec2f) Vec2f {
-	return other.MulScalar(v.Dot(other) / other.SquareLen())
+	return other.MulScalar(v.Dot(other) / other.SquareLength())
 }
 
 // Lerp performs a linear interpolation between two vectors.
@@ -168,7 +177,17 @@ func (v Vec2f) FlatAngle() float32 {
 }
 
 // Rotate rotates the vector on the 2D plane.
-func (v Vec2f) Rotate(radians float32) Vec2f {
-	angle := v.FlatAngle() + radians
+func (v Vec2f) Rotate(rad float32) Vec2f {
+	angle := v.FlatAngle() + rad
 	return AngleToVector(angle, v.Length())
+}
+
+// Distance returns the euclidean distance to another position.
+func (v Vec2f) Distance(other Vec2f) float32 {
+	return other.Sub(v).Length()
+}
+
+// SquareDistance returns the squared euclidean distance to another position.
+func (v Vec2f) SquareDistance(other Vec2f) float32 {
+	return other.Sub(v).SquareLength()
 }

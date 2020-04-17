@@ -2,14 +2,17 @@ package vmath
 
 // Ortho returns an orthographic projection matrix.
 func Ortho(left, right, bottom, top float32, near, far float32) Mat4f {
+	rl := right - left
+	bt := top - bottom
+	fn := far + near
 	return Mat4f{
-		2 / (right - left), 0, 0, 0,
-		0, 2 / (top - bottom), 0, 0,
+		2 / rl, 0, 0, 0,
+		0, 2 / bt, 0, 0,
 		0, 0, -2 / (far - near), 0,
 
-		-(right + left) / (right - left),
-		-(top + bottom) / (top - bottom),
-		-(far + near) / (far - near),
+		-(right + left) / rl,
+		-(top + bottom) / bt,
+		-fn / (far - near),
 		1,
 	}
 }
@@ -38,20 +41,20 @@ func Perspective(fovY, aspectRatio, near, far float32) Mat4f {
 
 // Frustum returns a frustum matrix.
 func Frustum(left, right, bottom, top float32, near, far float32) Mat4f {
-	invX := 1 / (right - left)
-	invY := 1 / (top - bottom)
-	invZ := 1 / (near - far)
+	rl := 1 / (right - left)
+	tb := 1 / (top - bottom)
+	nf := 1 / (near - far)
 
 	return Mat4f{
-		near * 2 * invX, 0, 0, 0,
-		0, near * 2 * invY, 0, 0,
+		near * 2 * rl, 0, 0, 0,
+		0, near * 2 * tb, 0, 0,
 
-		(right + left) * invX,
-		(bottom + top) * invY,
-		(near + far) * invZ,
+		(right + left) * rl,
+		(bottom + top) * tb,
+		(near + far) * nf,
 		-1,
 
-		0, 0, far * near * 2 * invZ, 0,
+		0, 0, far * near * 2 * nf, 0,
 	}
 }
 
@@ -69,6 +72,6 @@ func LookAt(eye, target, up Vec3f) Mat4f {
 		right[2], up[2], -forward[2], 0,
 		0, 0, 0, 1,
 	}
-	transMat := Mat4fFromTranslation(eye.Invert())
+	transMat := Mat4fFromTranslation(eye.Negate())
 	return res.Mul(transMat)
 }

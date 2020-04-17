@@ -21,14 +21,14 @@ func Ident2f() Mat2f {
 		0, 1}
 }
 
-// Mat2fFromRows builds a new 2x2 matrix from row vectors.
+// Mat2fFromRows creates a new 2x2 matrix from row vectors.
 func Mat2fFromRows(row0, row1 Vec2f) Mat2f {
 	return Mat2f{
 		row0[0], row1[0],
 		row0[1], row1[1]}
 }
 
-// Mat2fFromCols builds a new 2x2 matrix from column vectors.
+// Mat2fFromCols creates a new 2x2 matrix from column vectors.
 func Mat2fFromCols(col0, col1 Vec2f) Mat2f {
 	return Mat2f{
 		col0[0], col0[1],

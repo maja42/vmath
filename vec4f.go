@@ -16,6 +16,12 @@ func (v Vec4f) Vec4i() Vec4i {
 	return Vec4i{int(v[0]), int(v[1]), int(v[2]), int(v[3])}
 }
 
+// Round returns an integer representation of the vector.
+// Decimals are rounded.
+func (v Vec4f) Round() Vec4i {
+	return Vec4i{int(Round(v[0])), int(Round(v[1])), int(Round(v[2])), int(Round(v[3]))}
+}
+
 // Split returns the vector's components.
 func (v Vec4f) Split() (x, y, z, w float32) {
 	return v[0], v[1], v[2], v[3]
@@ -96,10 +102,13 @@ func (v Vec4f) DivScalar(s float32) Vec4f {
 }
 
 // Normalize the vector. Its length will be 1 afterwards.
-// If the vector is zero, all components will be infinite afterwards.
+// If the vector's length is zero, a zero vector will be returned.
 func (v Vec4f) Normalize() Vec4f {
-	l := 1.0 / v.Length()
-	return Vec4f{v[0] * l, v[1] * l, v[2] * l, v[3] * l}
+	length := v.Length()
+	if Equalf(length, 0) {
+		return Vec4f{}
+	}
+	return Vec4f{v[0] / length, v[1] / length, v[2] / length, v[3] / length}
 }
 
 // Length returns the vector's length.
@@ -107,8 +116,8 @@ func (v Vec4f) Length() float32 {
 	return Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3])
 }
 
-// SquareLen returns the vector's squared length.
-func (v Vec4f) SquareLen() float32 {
+// SquareLength returns the vector's squared length.
+func (v Vec4f) SquareLength() float32 {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]
 }
 
@@ -136,8 +145,8 @@ func (v Vec4f) Clamp(min, max float32) Vec4f {
 	}
 }
 
-// Invert inverts (negates) all components.
-func (v Vec4f) Invert() Vec4f {
+// Negate inverts all components.
+func (v Vec4f) Negate() Vec4f {
 	return Vec4f{-v[0], -v[1], -v[2], -v[3]}
 }
 
@@ -148,11 +157,21 @@ func (v Vec4f) Dot(other Vec4f) float32 {
 
 // Project returns a vector representing the projection of vector v onto "other".
 func (v Vec4f) Project(other Vec4f) Vec4f {
-	return other.MulScalar(v.Dot(other) / other.SquareLen())
+	return other.MulScalar(v.Dot(other) / other.SquareLength())
 }
 
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec4f) Lerp(other Vec4f, t float32) Vec4f {
 	return v.Mul(other.MulScalar(t))
+}
+
+// Distance returns the euclidean distance to another position.
+func (v Vec4f) Distance(other Vec4f) float32 {
+	return other.Sub(v).Length()
+}
+
+// SquareDistance returns the squared euclidean distance to another position.
+func (v Vec4f) SquareDistance(other Vec4f) float32 {
+	return other.Sub(v).SquareLength()
 }

@@ -68,13 +68,34 @@ func Wrapi(v, min, max int) int {
 }
 
 // Radians converts degrees into radians.
-func Radians(degrees float32) (radians float32) {
-	return math.Pi * degrees / 180.0
+func Radians(deg float32) float32 {
+	return math.Pi * deg / 180.0
 }
 
 // Degrees converts radians into degrees.
-func Degrees(radians float32) (degrees float32) {
-	return radians * (180.0 / math.Pi)
+func Degrees(rad float32) float32 {
+	return rad * (180.0 / math.Pi)
+}
+
+// CartesianToSpherical converts cartesian coordinates into spherical coordinates.
+// Returns the radius, azimuth (angle on XY-plane) and inclination.
+func CartesianToSpherical(pos Vec3f) (float32, float32, float32) {
+	radius := pos.Length()
+	azimuth := Atan2(pos[1], pos[0])
+	inclination := Acos(pos[2] / radius)
+	return radius, azimuth, inclination
+}
+
+// SphericalToCartesian converts spherical coordinates into cartesian coordinates.
+func SphericalToCartesian(radius, azimuth, inclination float32) Vec3f {
+	sinAz, cosAz := Sincos(azimuth)
+	sinInc, cosInc := Sincos(inclination)
+
+	return Vec3f{
+		radius * sinInc * cosAz,
+		radius * sinInc * sinAz,
+		radius * cosInc,
+	}
 }
 
 // Lerp performs a linear interpolation between a and b.
@@ -84,23 +105,23 @@ func Lerp(a, b, t float64) float64 {
 }
 
 // NormalizeRadians returns the angle in radians in the range [0, 2*PI[.
-func NormalizeRadians(radians float32) float32 {
+func NormalizeRadians(rad float32) float32 {
 	var pi2 float32 = math.Pi * 2
-	radians += pi2 * float32(int(radians/-pi2)+1)
-	radians -= pi2 * float32(int(radians/pi2))
-	return radians
+	rad += pi2 * float32(int(rad/-pi2)+1)
+	rad -= pi2 * float32(int(rad/pi2))
+	return rad
 }
 
 // NormalizeDegrees returns the angle in degrees in the range [0, 360[.
-func NormalizeDegrees(degrees float32) float32 {
-	degrees += float32(360 * (int(degrees/-360) + 1))
-	degrees -= float32(360 * int(degrees/360))
-	return degrees
+func NormalizeDegrees(deg float32) float32 {
+	deg += float32(360 * (int(deg/-360) + 1))
+	deg -= float32(360 * int(deg/360))
+	return deg
 }
 
 // AngleToVector returns a 2D vector with the given length and angle to the x-axis.
-func AngleToVector(radians float32, length float32) Vec2f {
-	sin, cos := Sincos(radians)
+func AngleToVector(rad float32, length float32) Vec2f {
+	sin, cos := Sincos(rad)
 	vec := Vec2f{cos, sin}
 	return vec.Normalize().MulScalar(length)
 }
@@ -115,8 +136,8 @@ func AngleDiff(fromRad, toRad float32) float32 {
 }
 
 // PointToLineDistance2D returns the distance between a point and an infinitely long line passing through a and b.
-// Source: http://geomalgorithms.com/a02-_lines.html
 func PointToLineDistance2D(a, b, point Vec2f) float32 {
+	// Source: http://geomalgorithms.com/a02-_lines.html
 	// 1) project the a->point vector onto the a->b vector
 	// 2) calculate the intersection point
 	// 3) return the distance between the point and the intersection
@@ -130,8 +151,8 @@ func PointToLineDistance2D(a, b, point Vec2f) float32 {
 }
 
 // PointToLineSegmentDistance2D returns the distance between a point and a line segment between a and b.
-// Source: http://geomalgorithms.com/a02-_lines.html
 func PointToLineSegmentDistance2D(a, b, point Vec2f) float32 {
+	// Source: http://geomalgorithms.com/a02-_lines.html
 	// 1) determine if the point is before (a) by comparing the angle between the a->b and a->point vector
 	//	  if the point is before, return the distance between the point and point a
 	// 2) determine if the point is after (b) by comparing the angle between the a->b and b->point vector
@@ -157,8 +178,8 @@ func PointToLineSegmentDistance2D(a, b, point Vec2f) float32 {
 }
 
 // PolarToCartesian2D converts length and angle into a 2D position.
-func PolarToCartesian2D(distance, radians float32) Vec2f {
-	sin, cos := Sincos(radians)
+func PolarToCartesian2D(distance, rad float32) Vec2f {
+	sin, cos := Sincos(rad)
 	return Vec2f{
 		cos * distance,
 		sin * distance,

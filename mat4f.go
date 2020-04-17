@@ -32,7 +32,7 @@ func Ident4f() Mat4f {
 		0, 0, 0, 1}
 }
 
-// Mat4fFromRows builds a new 4x4 matrix from row vectors.
+// Mat4fFromRows creates a new 4x4 matrix from row vectors.
 func Mat4fFromRows(row0, row1, row2, row3 Vec4f) Mat4f {
 	return Mat4f{
 		row0[0], row1[0], row2[0], row3[0],
@@ -41,13 +41,176 @@ func Mat4fFromRows(row0, row1, row2, row3 Vec4f) Mat4f {
 		row0[3], row1[3], row2[3], row3[3]}
 }
 
-// Mat4fFromCols builds a new 4x4 matrix from column vectors.
+// Mat4fFromCols creates a new 4x4 matrix from column vectors.
 func Mat4fFromCols(col0, col1, col2, col3 Vec4f) Mat4f {
 	return Mat4f{
 		col0[0], col0[1], col0[2], col0[3],
 		col1[0], col1[1], col1[2], col1[3],
 		col2[0], col2[1], col2[2], col2[3],
 		col3[0], col3[1], col3[2], col3[3]}
+}
+
+// Mat4fFromRotation creates a new 4x4 matrix, representing a rotation around a given axis.
+func Mat4fFromRotation(axis Vec3f, rad float32) Mat4f {
+	// Source: http://glmatrix.net/docs/module-mat4.html
+
+	length := axis.Length()
+	if Equalf(length, 0) {
+		return Ident4f()
+	}
+	axis = axis.DivScalar(length) // normalize
+	sin, cos := Sincos(rad)
+	icos := 1 - cos
+
+	return Mat4f{
+		axis[0]*axis[0]*icos + cos,
+		axis[1]*axis[0]*icos + axis[2]*sin,
+		axis[2]*axis[0]*icos - axis[1]*sin,
+		0,
+
+		axis[0]*axis[1]*icos - axis[2]*sin,
+		axis[1]*axis[1]*icos + cos,
+		axis[2]*axis[1]*icos + axis[0]*sin,
+		0,
+
+		axis[0]*axis[2]*icos + axis[1]*sin,
+		axis[1]*axis[2]*icos - axis[0]*sin,
+		axis[2]*axis[2]*icos + cos,
+		0,
+
+		0, 0, 0, 1,
+	}
+}
+
+// Mat4fFromRotationTranslation creates a new 4x4 matrix, representing a rotation and translation.
+func Mat4fFromRotationTranslation(rot Quat, trans Vec3f) Mat4f {
+	// Source: http://glmatrix.net/docs/module-mat4.html
+
+	xx := rot.X * 2 * rot.X
+	xy := rot.Y * 2 * rot.X
+	xz := rot.Z * 2 * rot.X
+	yy := rot.Y * 2 * rot.Y
+	yz := rot.Z * 2 * rot.Y
+	zz := rot.Z * 2 * rot.Z
+	wx := rot.X * 2 * rot.W
+	wy := rot.Y * 2 * rot.W
+	wz := rot.Z * 2 * rot.W
+
+	return Mat4f{
+		1 - (yy + zz), xy + wz, xz - wy, 0,
+		xy - wz, 1 - (xx + zz), yz + wx, 0,
+		xz + wy, yz - wx, 1 - (xx + yy), 0,
+		trans[0], trans[1], trans[2], 1,
+	}
+}
+
+// Mat4fFromRotationTranslationScale creates a new 4x4 matrix, representing a rotation, translation and scaling.
+func Mat4fFromRotationTranslationScale(rot Quat, trans, scale Vec3f) Mat4f {
+	// Source: http://glmatrix.net/docs/module-mat4.html
+
+	xx := rot.X * 2 * rot.X
+	xy := rot.Y * 2 * rot.X
+	xz := rot.Z * 2 * rot.X
+	yy := rot.Y * 2 * rot.Y
+	yz := rot.Z * 2 * rot.Y
+	zz := rot.Z * 2 * rot.Z
+	wx := rot.X * 2 * rot.W
+	wy := rot.Y * 2 * rot.W
+	wz := rot.Z * 2 * rot.W
+
+	return Mat4f{
+		(1 - (yy + zz)) * scale[0], (xy + wz) * scale[0], (xz - wy) * scale[0], 0,
+		(xy - wz) * scale[1], (1 - (xx + zz)) * scale[1], (yz + wx) * scale[1], 0,
+		(xz + wy) * scale[2], (yz - wx) * scale[2], (1 - (xx + yy)) * scale[2], 0,
+		trans[0], trans[1], trans[2], 1,
+	}
+}
+
+// Mat4fFromRotationTranslationScale creates a new 4x4 matrix, representing a rotation, translation and scaling.
+// Rotation and scaling is performed around the given origin.
+func Mat4fFromRotationTranslationScaleOrigin(rot Quat, trans, scale, orig Vec3f) Mat4f {
+	// Source: http://glmatrix.net/docs/module-mat4.html
+
+	xx := rot.X * 2 * rot.X
+	xy := rot.Y * 2 * rot.X
+	xz := rot.Z * 2 * rot.X
+	yy := rot.Y * 2 * rot.Y
+	yz := rot.Z * 2 * rot.Y
+	zz := rot.Z * 2 * rot.Z
+	wx := rot.X * 2 * rot.W
+	wy := rot.Y * 2 * rot.W
+	wz := rot.Z * 2 * rot.W
+
+	o0 := (1 - (yy + zz)) * scale[0]
+	o1 := (xy + wz) * scale[0]
+	o2 := (xz - wy) * scale[0]
+
+	o4 := (xy - wz) * scale[1]
+	o5 := (1 - (xx + zz)) * scale[1]
+	o6 := (yz + wx) * scale[1]
+
+	o8 := (xz + wy) * scale[2]
+	o9 := (yz - wx) * scale[2]
+	o10 := (1 - (xx + yy)) * scale[2]
+
+	return Mat4f{
+		o0, o1, o2, 0,
+		o4, o5, o6, 0,
+		o8, o9, o10, 0,
+
+		trans[0] + orig[0] - (o0*orig[0] + o4*orig[1] + o8*orig[2]),
+		trans[1] + orig[1] - (o1*orig[0] + o5*orig[1] + o9*orig[2]),
+		trans[2] + orig[2] - (o2*orig[0] + o6*orig[1] + o10*orig[2]),
+		1,
+	}
+}
+
+// Mat4fFromTranslation returns the 4x4 matrix with the given translation vector.
+func Mat4fFromTranslation(translation Vec3f) Mat4f {
+	return Mat4f{
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		translation[0], translation[1], translation[2], 1}
+}
+
+// Mat4fFromScaling returns a 4x4 matrix with the given scaling.
+func Mat4fFromScaling(scaling Vec3f) Mat4f {
+	return Mat4f{
+		scaling[0], 0, 0, 0,
+		0, scaling[1], 0, 0,
+		0, 0, scaling[2], 0,
+		0, 0, 0, 1}
+}
+
+// Mat4fFromXRotation returns the 4x4 matrix with a rotation around the X-axis.
+func Mat4fFromXRotation(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
+	return Mat4f{
+		1, 0, 0, 0,
+		0, cos, sin, 0,
+		0, -sin, cos, 0,
+		0, 0, 0, 1}
+}
+
+// Mat4fFromYRotation returns the 4x4 matrix with a rotation around the Y-axis.
+func Mat4fFromYRotation(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
+	return Mat4f{
+		cos, 0, -sin, 0,
+		0, 1, 0, 0,
+		sin, 0, cos, 0,
+		0, 0, 0, 1}
+}
+
+// Mat4fFromZRotation returns the 4x4 matrix with a rotation around the Z-axis.
+func Mat4fFromZRotation(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
+	return Mat4f{
+		cos, sin, 0, 0,
+		-sin, cos, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1}
 }
 
 // Mat2f shrinks the matrix to 2x2.
@@ -326,13 +489,13 @@ func (m Mat4f) SetTranslation(translation Vec3f) Mat4f {
 	return m
 }
 
-// Mat4fFromTranslation returns the 4x4 matrix with the given translation vector.
-func Mat4fFromTranslation(translation Vec3f) Mat4f {
-	return Mat4f{
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		translation[0], translation[1], translation[2], 1}
+// Translate translates the matrix by the given vector.
+func (m Mat4f) Translate(translation Vec3f) Mat4f {
+	m[12] = m[0]*translation[0] + m[4]*translation[1] + m[8]*translation[2] + m[12]
+	m[13] = m[1]*translation[0] + m[5]*translation[1] + m[9]*translation[2] + m[13]
+	m[14] = m[2]*translation[0] + m[6]*translation[1] + m[10]*translation[2] + m[14]
+	m[15] = m[3]*translation[0] + m[7]*translation[1] + m[11]*translation[2] + m[15]
+	return m
 }
 
 // Scaling returns the scaling of the matrix.
@@ -348,11 +511,126 @@ func (m Mat4f) SetScaling(scaling Vec3f) Mat4f {
 	return m
 }
 
-// Mat4fFromScaling returns a 4x4 matrix with the given scaling.
-func Mat4fFromScaling(scaling Vec3f) Mat4f {
+// Scale scales the matrix.
+func (m Mat4f) Scale(scaling Vec3f) Mat4f {
+	return Mat4fFromCols(
+		m.Col(0).MulScalar(scaling[0]),
+		m.Col(1).MulScalar(scaling[1]),
+		m.Col(2).MulScalar(scaling[2]),
+		m.Col(3),
+	)
+}
+
+// Rotation returns a quaternion with the rotation of the matrix.
+func (m Mat4f) Rotation() Quat {
+	// Source: http://glmatrix.net/docs/module-mat4.html
+
+	scaling := m.Scaling()
+	invS := Vec3f{1 / scaling[0], 1 / scaling[1], 1 / scaling[2]}
+
+	sm11 := m[0] * invS[0]
+	sm12 := m[1] * invS[1]
+	sm13 := m[2] * invS[2]
+
+	sm21 := m[4] * invS[0]
+	sm22 := m[5] * invS[1]
+	sm23 := m[6] * invS[2]
+
+	sm31 := m[8] * invS[0]
+	sm32 := m[9] * invS[1]
+	sm33 := m[10] * invS[2]
+
+	trace := sm11 + sm22 + sm33
+	if trace > 0 {
+		s := Sqrt(trace+1) * 2
+		return Quat{
+			0.25 * s,
+			(sm23 - sm32) / s,
+			(sm31 - sm13) / s,
+			(sm12 - sm21) / s,
+		}
+	} else if sm11 > sm22 && sm11 > sm33 {
+		s := Sqrt(1+sm11-sm22-sm33) * 2
+		return Quat{
+			(sm23 - sm32) / s,
+			0.25 * s,
+			(sm12 + sm21) / s,
+			(sm31 + sm13) / s,
+		}
+	} else if sm22 > sm33 {
+		s := Sqrt(1+sm22-sm11-sm33) * 2
+		return Quat{
+			(sm31 - sm13) / s,
+			(sm12 + sm21) / s,
+			0.25 * s,
+			(sm23 + sm32) / s,
+		}
+	} else {
+		s := Sqrt(1+sm33-sm11-sm22) * 2
+		return Quat{
+			(sm12 - sm21) / s,
+			(sm31 + sm13) / s,
+			(sm23 + sm32) / s,
+			0.25 * s,
+		}
+	}
+}
+
+// RotateX rotates the matrix around the X-axis.
+func (m Mat4f) RotateX(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
 	return Mat4f{
-		scaling[0], 0, 0, 0,
-		0, scaling[1], 0, 0,
-		0, 0, scaling[2], 0,
-		0, 0, 0, 1}
+		m[0], m[1], m[2], m[3],
+
+		m[4]*cos + m[8]*sin,
+		m[5]*cos + m[9]*sin,
+		m[6]*cos + m[10]*sin,
+		m[7]*cos + m[11]*sin,
+
+		m[8]*cos - m[4]*sin,
+		m[9]*cos - m[5]*sin,
+		m[10]*cos - m[6]*sin,
+		m[10]*cos - m[6]*sin,
+
+		m[12], m[13], m[14], m[15],
+	}
+}
+
+// RotateY rotates the matrix around the Y-axis.
+func (m Mat4f) RotateY(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
+	return Mat4f{
+		m[0]*cos - m[8]*sin,
+		m[1]*cos - m[9]*sin,
+		m[2]*cos - m[10]*sin,
+		m[3]*cos - m[11]*sin,
+
+		m[4], m[5], m[6], m[7],
+
+		m[0]*sin + m[8]*cos,
+		m[1]*sin + m[9]*cos,
+		m[2]*sin + m[10]*cos,
+		m[3]*sin + m[11]*cos,
+
+		m[12], m[13], m[14], m[15],
+	}
+}
+
+// RotateZ rotates the matrix around the Z-axis.
+func (m Mat4f) RotateZ(rad float32) Mat4f {
+	sin, cos := Sincos(rad)
+	return Mat4f{
+		m[0]*cos + m[4]*sin,
+		m[1]*cos + m[5]*sin,
+		m[2]*cos + m[6]*sin,
+		m[3]*cos + m[7]*sin,
+
+		m[4]*cos - m[0]*sin,
+		m[5]*cos - m[1]*sin,
+		m[6]*cos - m[2]*sin,
+		m[7]*cos - m[3]*sin,
+
+		m[8], m[9], m[10], m[11],
+		m[12], m[13], m[14], m[15],
+	}
 }

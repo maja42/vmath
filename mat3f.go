@@ -27,7 +27,7 @@ func Ident3f() Mat3f {
 		0, 0, 1}
 }
 
-// Mat3fFromCols builds a new 3x3 matrix from row vectors.
+// Mat3fFromCols creates a new 3x3 matrix from row vectors.
 func Mat3fFromRows(row0, row1, row2 Vec3f) Mat3f {
 	return Mat3f{
 		row0[0], row1[0], row2[0],
@@ -35,7 +35,7 @@ func Mat3fFromRows(row0, row1, row2 Vec3f) Mat3f {
 		row0[2], row1[2], row2[2]}
 }
 
-// Mat3fFromCols builds a new 3x3 matrix from column vectors.
+// Mat3fFromCols creates a new 3x3 matrix from column vectors.
 func Mat3fFromCols(col0, col1, col2 Vec3f) Mat3f {
 	return Mat3f{
 		col0[0], col0[1], col0[2],
