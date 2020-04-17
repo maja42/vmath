@@ -146,6 +146,25 @@ func (v Vec2f) Cross(other Vec2f) Vec2f {
 	}
 }
 
+// MagCross returns the length of the cross product vector.
+func (v Vec2f) MagCross(other Vec2f) float32 {
+	return v[0]*other[1] - v[1]*other[0]
+}
+
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel.
+// Uses the default Epsilon as relative tolerance.
+func (v Vec2f) IsParallel(other Vec2f) bool {
+	return Equalf(v.MagCross(other), 0)
+}
+
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel.
+// Uses the given Epsilon as relative tolerance.
+func (v Vec2f) IsParallelEps(other Vec2f, eps float32) bool {
+	return EqualEps(v.MagCross(other), 0, eps)
+}
+
 // NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.
 func (v Vec2f) NormalVec(onLeft bool) Vec2f {
 	if onLeft {

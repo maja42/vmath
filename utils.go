@@ -177,6 +177,21 @@ func PointToLineSegmentDistance2D(a, b, point Vec2f) float32 {
 	return point.Sub(pb).Length()
 }
 
+// IsPointOnLine returns true if the give point lies to the line a->b;
+// Uses the default Epsilon as relative tolerance.
+func IsPointOnLine(a, b Vec2f, point Vec2f) bool {
+	return IsPointOnLineEps(a, b, point, Epsilon)
+}
+
+// IsPointOnLine returns true if the give point lies to the line a->b;
+// Uses the given Epsilon as relative tolerance.
+func IsPointOnLineEps(a, b Vec2f, point Vec2f, eps float32) bool {
+	lineVec := b.Sub(a)
+	pointVec := point.Sub(a)
+	crossZ := lineVec[0]*pointVec[1] - lineVec[1]*pointVec[0]
+	return EqualEps(crossZ, 0, eps)
+}
+
 // PolarToCartesian2D converts length and angle into a 2D position.
 func PolarToCartesian2D(distance, rad float32) Vec2f {
 	sin, cos := Sincos(rad)
@@ -184,4 +199,13 @@ func PolarToCartesian2D(distance, rad float32) Vec2f {
 		cos * distance,
 		sin * distance,
 	}
+}
+
+// IsPointOnLeft returns true if the give point lies to the left of line a->b;
+// If the point lies directly on the line, false is returned.
+func IsPointOnLeft(a, b Vec2f, point Vec2f) bool {
+	lineVec := b.Sub(a)
+	pointVec := point.Sub(a)
+	crossZ := lineVec[0]*pointVec[1] - lineVec[1]*pointVec[0]
+	return crossZ > 0
 }
