@@ -115,6 +115,14 @@ func (r Recti) OverlapsOrTouches(other Recti) bool {
 		r.Min[1] <= other.Max[1]
 }
 
+// ContainsRecti checks if this rectangle completely contains another rectangle.
+func (r Recti) ContainsRecti(other Recti) bool {
+	return r.Min[0] <= other.Min[0] &&
+		r.Max[0] >= other.Max[0] &&
+		r.Min[1] <= other.Min[1] &&
+		r.Max[1] >= other.Max[1]
+}
+
 // Contains checks if a given point resides within the rectangle.
 // If the point is on an edge, it is also considered to be contained within the rectangle.
 func (r Recti) Contains(point Vec2i) bool {
