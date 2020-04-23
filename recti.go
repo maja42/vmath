@@ -82,6 +82,22 @@ func (r Recti) Top() int {
 	return r.Max[1]
 }
 
+// Add moves the rectangle with the given vector by adding it to the min- and max- components.
+func (r Recti) Add(v Vec2i) Recti {
+	return Recti{
+		Min: r.Min.Add(v),
+		Max: r.Max.Add(v),
+	}
+}
+
+// Sub moves the rectangle with the given vector by subtracting it to the min- and max- components.
+func (r Recti) Sub(v Vec2i) Recti {
+	return Recti{
+		Min: r.Min.Sub(v),
+		Max: r.Max.Sub(v),
+	}
+}
+
 // Overlaps checks if this rectangle overlaps another rectangle.
 // Touching rectangles where floats are exactly equal are not considered to overlap.
 func (r Recti) Overlaps(other Recti) bool {

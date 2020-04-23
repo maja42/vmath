@@ -83,6 +83,22 @@ func (r Rectf) Top() float32 {
 	return r.Max[1]
 }
 
+// Add moves the rectangle with the given vector by adding it to the min- and max- components.
+func (r Rectf) Add(v Vec2f) Rectf {
+	return Rectf{
+		Min: r.Min.Add(v),
+		Max: r.Max.Add(v),
+	}
+}
+
+// Sub moves the rectangle with the given vector by subtracting it to the min- and max- components.
+func (r Rectf) Sub(v Vec2f) Rectf {
+	return Rectf{
+		Min: r.Min.Sub(v),
+		Max: r.Max.Sub(v),
+	}
+}
+
 // Overlaps checks if this rectangle overlaps another rectangle.
 // Touching rectangles where floats are exactly equal are not considered to overlap.
 func (r Rectf) Overlaps(other Rectf) bool {
