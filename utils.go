@@ -5,11 +5,16 @@ import (
 )
 
 // Epsilon is the default epsilon value for float comparisons.
-const Epsilon = 1.0E-8
+const Epsilon = 1.0E-6
 
 // Equalf compares two floats for equality.
 // Uses the default Epsilon as relative tolerance.
 func Equalf(a, b float32) bool {
+	// Comparing floats is complicated and tricky, and there is no "right" solution for doing it.
+	// Using relative epsilon comparisons works really well, until numbers are getting very small.
+	// If a value is compared to zero, it was often calculated by subtracting two (potentially big) numbers,
+	// leading to a difference that is small compared to the original numbers, but quite big compared to zero.
+	// https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
 	return EqualEps(a, b, Epsilon)
 }
 
@@ -55,14 +60,14 @@ func Clampi(v, min, max int) int {
 	return v
 }
 
-// Wrapf returns the value v in the range of [min, max] by wrapping it around.
+// Wrapf returns the value v in the range of [min, max[ by wrapping it around.
 func Wrapf(v, min, max float32) float32 {
 	diff := max - min
 	v -= min
 	return min + v - diff*Floor(v/diff)
 }
 
-// Wrapi returns the value v in the range of [min, max] by wrapping it around.
+// Wrapi returns the value v in the range of [min, max[ by wrapping it around.
 func Wrapi(v, min, max int) int {
 	return int(Wrapf(float32(v), float32(min), float32(max)))
 }
@@ -100,7 +105,7 @@ func SphericalToCartesian(radius, azimuth, inclination float32) Vec3f {
 
 // Lerp performs a linear interpolation between a and b.
 // The parameter t should be in range [0, 1].
-func Lerp(a, b, t float64) float64 {
+func Lerp(a, b, t float32) float32 {
 	return a*(1-t) + b*t
 }
 
@@ -188,8 +193,8 @@ func IsPointOnLine(a, b Vec2f, point Vec2f) bool {
 func IsPointOnLineEps(a, b Vec2f, point Vec2f, eps float32) bool {
 	lineVec := b.Sub(a)
 	pointVec := point.Sub(a)
-	crossZ := lineVec[0]*pointVec[1] - lineVec[1]*pointVec[0]
-	return EqualEps(crossZ, 0, eps)
+	// compare the z-coordinate of the cross-product with zero, without losing magnitude information for eps-comparison
+	return EqualEps(lineVec[0]*pointVec[1], lineVec[1]*pointVec[0], eps)
 }
 
 // PolarToCartesian2D converts length and angle into a 2D position.

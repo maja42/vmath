@@ -98,3 +98,16 @@ func (r Rectf) Contains(point Vec2f) bool {
 	return point[0] >= r.Min[0] && point[0] <= r.Max[0] &&
 		point[1] >= r.Min[1] && point[1] <= r.Max[1]
 }
+
+// Merge returns a rectangle that contains both smaller rectangles.
+func (r Rectf) Merge(other Rectf) Rectf {
+	min := Vec2f{
+		Min(r.Min[0], other.Min[0]),
+		Min(r.Min[1], other.Min[1]),
+	}
+	max := Vec2f{
+		Max(r.Max[0], other.Max[0]),
+		Max(r.Max[1], other.Max[1]),
+	}
+	return Rectf{min, max}
+}

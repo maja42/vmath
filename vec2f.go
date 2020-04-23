@@ -10,6 +10,16 @@ func (v Vec2f) String() string {
 	return fmt.Sprintf("Vec2f[%f x %f]", v[0], v[1])
 }
 
+// XVec2f returns a 2D vector representing the X-axis.
+func XVec2f() Vec2f {
+	return Vec2f{1, 0}
+}
+
+// YVec2f returns a 2D vector representing the Y-axis.
+func YVec2f() Vec2f {
+	return Vec2f{0, 1}
+}
+
 // Vec2i returns an integer representation of the vector.
 // Decimals are truncated (rounded down).
 func (v Vec2f) Vec2i() Vec2i {
@@ -109,6 +119,12 @@ func (v Vec2f) SquareLength() float32 {
 	return v[0]*v[0] + v[1]*v[1]
 }
 
+// IsZero returns true if all components are zero.
+// Uses the default Epsilon as relative tolerance.
+func (v Vec2f) IsZero() bool {
+	return v.EqualEps(Vec2f{}, Epsilon)
+}
+
 // Equal compares two vectors component-wise.
 // Uses the default Epsilon as relative tolerance.
 func (v Vec2f) Equal(other Vec2f) bool {
@@ -138,15 +154,9 @@ func (v Vec2f) Dot(other Vec2f) float32 {
 	return v[0]*other[0] + v[1]*other[1]
 }
 
-// Cross performs a cross product with another vector.
-func (v Vec2f) Cross(other Vec2f) Vec2f {
-	return Vec2f{
-		v[1]*other[0] - v[0]*other[1],
-		v[0]*other[1] - v[1]*other[0],
-	}
-}
-
 // MagCross returns the length of the cross product vector.
+// This is equal to the magnitude of a 3D cross product vector, with the Z position implicitly set to zero.
+// It represents twice the signed area between the two vectors.
 func (v Vec2f) MagCross(other Vec2f) float32 {
 	return v[0]*other[1] - v[1]*other[0]
 }
@@ -181,12 +191,12 @@ func (v Vec2f) Project(other Vec2f) Vec2f {
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec2f) Lerp(other Vec2f, t float32) Vec2f {
-	return v.Mul(other.MulScalar(t))
+	return v.MulScalar(1 - t).Add(other.MulScalar(t))
 }
 
-// Angle returns the angle between two vectors in radians.
+// Angle returns the angle relative to another vector.
 func (v Vec2f) Angle(other Vec2f) float32 {
-	return Atan2(other[1]-v[1], other[0]-v[0])
+	return Atan2(other[1], other[0]) - Atan2(v[1], v[0])
 }
 
 // FlatAngle returns the angle of a vector in radians.

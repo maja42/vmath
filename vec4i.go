@@ -11,6 +11,21 @@ func (v Vec4i) String() string {
 	return fmt.Sprintf("Vec4i[%d x %d x %d x %d]", v[0], v[1], v[2], v[3])
 }
 
+// XVec4i returns a 4D vector representing the X-axis.
+func XVec4i() Vec4i {
+	return Vec4i{1, 0, 0, 0}
+}
+
+// YVec4i returns a 4D vector representing the Y-axis.
+func YVec4i() Vec4i {
+	return Vec4i{0, 1, 0, 0}
+}
+
+// ZVec4i returns a 4D vector representing the Z-axis.
+func ZVec4i() Vec4i {
+	return Vec4i{0, 0, 1, 0}
+}
+
 // Vec2f returns a float representation of the vector.
 func (v Vec4i) Vec4f() Vec4f {
 	return Vec4f{float32(v[0]), float32(v[1]), float32(v[2]), float32(v[3])}
@@ -103,6 +118,11 @@ func (v Vec4i) Length() float32 {
 // SquareLength returns the vector's squared length.
 func (v Vec4i) SquareLength() int {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3]
+}
+
+// IsZero returns true if all components are zero.
+func (v Vec4i) IsZero() bool {
+	return v[0] == 0 && v[1] == 0 && v[2] == 0 && v[3] == 0
 }
 
 // Equal compares two vectors component-wise.

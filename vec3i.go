@@ -11,6 +11,21 @@ func (v Vec3i) String() string {
 	return fmt.Sprintf("Vec3i[%d x %d x %d]", v[0], v[1], v[2])
 }
 
+// XVec3i returns a 3D vector representing the X-axis.
+func XVec3i() Vec3i {
+	return Vec3i{1, 0, 0}
+}
+
+// YVec3i returns a 3D vector representing the Y-axis.
+func YVec3i() Vec3i {
+	return Vec3i{0, 1, 0}
+}
+
+// ZVec3i returns a 3D vector representing the Z-axis.
+func ZVec3i() Vec3i {
+	return Vec3i{0, 0, 1}
+}
+
 // Vec2f returns a float representation of the vector.
 func (v Vec3i) Vec3f() Vec3f {
 	return Vec3f{float32(v[0]), float32(v[1]), float32(v[2])}
@@ -59,6 +74,11 @@ func (v Vec3i) AddScalar(s int) Vec3i {
 	return Vec3i{v[0] + s, v[1] + s, v[2] + s}
 }
 
+// AddScalarf performs a scalar addition.
+func (v Vec3i) AddScalarf(s float32) Vec3f {
+	return Vec3f{float32(v[0]) + s, float32(v[1]) + s, float32(v[2]) + s}
+}
+
 // Sub performs component-wise subtraction between two vectors.
 func (v Vec3i) Sub(other Vec3i) Vec3i {
 	return Vec3i{v[0] - other[0], v[1] - other[1], v[2] - other[2]}
@@ -67,6 +87,11 @@ func (v Vec3i) Sub(other Vec3i) Vec3i {
 // SubScalar performs a component-wise scalar subtraction.
 func (v Vec3i) SubScalar(s int) Vec3i {
 	return Vec3i{v[0] - s, v[1] - s, v[2] - s}
+}
+
+// SubScalarf performs a scalar subtraction.
+func (v Vec3i) SubScalarf(s float32) Vec3f {
+	return Vec3f{float32(v[0]) - s, float32(v[1]) - s, float32(v[2]) - s}
 }
 
 // Mul performs a component-wise multiplication.
@@ -79,6 +104,11 @@ func (v Vec3i) MulScalar(s int) Vec3i {
 	return Vec3i{v[0] * s, v[1] * s, v[2] * s}
 }
 
+// MulScalar performs a scalar multiplication.
+func (v Vec3i) MulScalarf(s float32) Vec3f {
+	return Vec3f{float32(v[0]) * s, float32(v[1]) * s, float32(v[2]) * s}
+}
+
 // Div performs a component-wise division.
 func (v Vec3i) Div(other Vec3i) Vec3i {
 	return Vec3i{v[0] / other[0], v[1] / other[1], v[2] / other[2]}
@@ -89,6 +119,11 @@ func (v Vec3i) DivScalar(s int) Vec3i {
 	return Vec3i{v[0] / s, v[1] / s, v[2] / s}
 }
 
+// DivScalarf performs a scalar division.
+func (v Vec3i) DivScalarf(s float32) Vec3f {
+	return Vec3f{float32(v[0]) / s, float32(v[1]) / s, float32(v[2]) / s}
+}
+
 // Length returns the vector's length.
 func (v Vec3i) Length() float32 {
 	return float32(math.Sqrt(float64(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])))
@@ -97,6 +132,11 @@ func (v Vec3i) Length() float32 {
 // SquareLength returns the vector's squared length.
 func (v Vec3i) SquareLength() int {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
+}
+
+// IsZero returns true if all components are zero.
+func (v Vec3i) IsZero() bool {
+	return v[0] == 0 && v[1] == 0 && v[2] == 0
 }
 
 // Equal compares two vectors component-wise.

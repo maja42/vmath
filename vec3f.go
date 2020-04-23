@@ -11,6 +11,21 @@ func (v Vec3f) String() string {
 	return fmt.Sprintf("Vec3f[%f x %f x %f]", v[0], v[1], v[2])
 }
 
+// XVec3f returns a 3D vector representing the X-axis.
+func XVec3f() Vec3f {
+	return Vec3f{1, 0, 0}
+}
+
+// YVec3f returns a 3D vector representing the Y-axis.
+func YVec3f() Vec3f {
+	return Vec3f{0, 1, 0}
+}
+
+// ZVec3f returns a 3D vector representing the Z-axis.
+func ZVec3f() Vec3f {
+	return Vec3f{0, 0, 1}
+}
+
 // Vec3i returns an integer representation of the vector.
 // Decimals are truncated (rounded down).
 func (v Vec3f) Vec3i() Vec3i {
@@ -114,6 +129,12 @@ func (v Vec3f) Length() float32 {
 // SquareLength returns the vector's squared length.
 func (v Vec3f) SquareLength() float32 {
 	return v[0]*v[0] + v[1]*v[1] + v[2]*v[2]
+}
+
+// IsZero returns true if all components are zero.
+// Uses the default Epsilon as relative tolerance.
+func (v Vec3f) IsZero() bool {
+	return v.EqualEps(Vec3f{}, Epsilon)
 }
 
 // Equal compares two vectors component-wise.

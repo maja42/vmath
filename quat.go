@@ -192,6 +192,17 @@ func (q Quat) Angle() float32 {
 	return Acos(q.W) * 2
 }
 
+// AxisRotation returns the quaternion's rotation angle and axis.
+func (q Quat) AxisRotation() (Vec3f, float32) {
+	// Based on: http://glmatrix.net/docs/module-quat.html
+	rad := q.Angle()
+	s := Sin(rad * 0.5)
+	if s < Epsilon { // no rotation
+		return Vec3f{1, 0, 0}, rad
+	}
+	return Vec3f{q.X / s, q.Y / s, q.Z / s}, rad
+}
+
 // QuatFromEuler returns a quaternion based on the given euler rotations.
 // Axis: yaw: Z, pitch: Y, roll: X
 func QuatFromEuler(yaw, pitch, roll float32) Quat {

@@ -10,6 +10,16 @@ func (v Vec2i) String() string {
 	return fmt.Sprintf("Vec2i[%d x %d]", v[0], v[1])
 }
 
+// XVec2i returns a 2D vector representing the X-axis.
+func XVec2i() Vec2i {
+	return Vec2i{1, 0}
+}
+
+// YVec2i returns a 2D vector representing the Y-axis.
+func YVec2i() Vec2i {
+	return Vec2i{0, 1}
+}
+
 // Vec2f returns a float representation of the vector.
 func (v Vec2i) Vec2f() Vec2f {
 	return Vec2f{float32(v[0]), float32(v[1])}
@@ -52,6 +62,11 @@ func (v Vec2i) AddScalar(s int) Vec2i {
 	return Vec2i{v[0] + s, v[1] + s}
 }
 
+// AddScalarf performs a scalar addition.
+func (v Vec2i) AddScalarf(s float32) Vec2f {
+	return Vec2f{float32(v[0]) + s, float32(v[1]) + s}
+}
+
 // Sub performs component-wise subtraction between two vectors.
 func (v Vec2i) Sub(other Vec2i) Vec2i {
 	return Vec2i{v[0] - other[0], v[1] - other[1]}
@@ -60,6 +75,11 @@ func (v Vec2i) Sub(other Vec2i) Vec2i {
 // SubScalar performs a component-wise scalar subtraction.
 func (v Vec2i) SubScalar(s int) Vec2i {
 	return Vec2i{v[0] - s, v[1] - s}
+}
+
+// SubScalarf performs a scalar subtraction.
+func (v Vec2i) SubScalarf(s float32) Vec2f {
+	return Vec2f{float32(v[0]) - s, float32(v[1]) - s}
 }
 
 // Mul performs a component-wise multiplication.
@@ -72,6 +92,11 @@ func (v Vec2i) MulScalar(s int) Vec2i {
 	return Vec2i{v[0] * s, v[1] * s}
 }
 
+// MulScalar performs a scalar multiplication.
+func (v Vec2i) MulScalarf(s float32) Vec2f {
+	return Vec2f{float32(v[0]) * s, float32(v[1]) * s}
+}
+
 // Div performs a component-wise division.
 func (v Vec2i) Div(other Vec2i) Vec2i {
 	return Vec2i{v[0] / other[0], v[1] / other[1]}
@@ -82,6 +107,11 @@ func (v Vec2i) DivScalar(s int) Vec2i {
 	return Vec2i{v[0] / s, v[1] / s}
 }
 
+// DivScalarf performs a scalar division.
+func (v Vec2i) DivScalarf(s float32) Vec2f {
+	return Vec2f{float32(v[0]) / s, float32(v[1]) / s}
+}
+
 // Length returns the vector's length.
 func (v Vec2i) Length() float32 {
 	return Hypot(float32(v[0]*v[0]), float32(v[1]*v[1]))
@@ -90,6 +120,11 @@ func (v Vec2i) Length() float32 {
 // SquareLength returns the vector's squared length.
 func (v Vec2i) SquareLength() int {
 	return v[0]*v[0] + v[1]*v[1]
+}
+
+// IsZero returns true if all components are zero.
+func (v Vec2i) IsZero() bool {
+	return v[0] == 0 && v[1] == 0
 }
 
 // Equal compares two vectors component-wise.
