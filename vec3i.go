@@ -11,6 +11,11 @@ func (v Vec3i) String() string {
 	return fmt.Sprintf("Vec3i[%d x %d x %d]", v[0], v[1], v[2])
 }
 
+// Format the vector to a string.
+func (v Vec3i) Format(format string) string {
+	return fmt.Sprintf(format, v[0], v[1], v[2])
+}
+
 // XVec3i returns a 3D vector representing the X-axis.
 func XVec3i() Vec3i {
 	return Vec3i{1, 0, 0}

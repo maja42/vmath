@@ -10,6 +10,11 @@ func (v Vec2i) String() string {
 	return fmt.Sprintf("Vec2i[%d x %d]", v[0], v[1])
 }
 
+// Format the vector to a string.
+func (v Vec2i) Format(format string) string {
+	return fmt.Sprintf(format, v[0], v[1])
+}
+
 // XVec2i returns a 2D vector representing the X-axis.
 func XVec2i() Vec2i {
 	return Vec2i{1, 0}

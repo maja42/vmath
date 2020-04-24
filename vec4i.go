@@ -11,6 +11,11 @@ func (v Vec4i) String() string {
 	return fmt.Sprintf("Vec4i[%d x %d x %d x %d]", v[0], v[1], v[2], v[3])
 }
 
+// Format the vector to a string.
+func (v Vec4i) Format(format string) string {
+	return fmt.Sprintf(format, v[0], v[1], v[2], v[3])
+}
+
 // XVec4i returns a 4D vector representing the X-axis.
 func XVec4i() Vec4i {
 	return Vec4i{1, 0, 0, 0}
