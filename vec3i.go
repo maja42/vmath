@@ -31,6 +31,11 @@ func ZVec3i() Vec3i {
 	return Vec3i{0, 0, 1}
 }
 
+// Abs returns a vector with the components turned into absolute values.
+func (v Vec3i) Abs() Vec3i {
+	return Vec3i{Absi(v[0]), Absi(v[1]), Absi(v[2])}
+}
+
 // Vec2f returns a float representation of the vector.
 func (v Vec3i) Vec3f() Vec3f {
 	return Vec3f{float32(v[0]), float32(v[1]), float32(v[2])}

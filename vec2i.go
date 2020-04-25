@@ -57,6 +57,11 @@ func (v Vec2i) Y() int {
 	return v[1]
 }
 
+// Abs returns a vector with the components turned into absolute values.
+func (v Vec2i) Abs() Vec2i {
+	return Vec2i{Absi(v[0]), Absi(v[1])}
+}
+
 // Add performs component-wise addition between two vectors.
 func (v Vec2i) Add(other Vec2i) Vec2i {
 	return Vec2i{v[0] + other[0], v[1] + other[1]}

@@ -81,6 +81,11 @@ func (v Vec4f) XYZ() Vec3f {
 	return Vec3f{v[0], v[1], v[2]}
 }
 
+// Abs returns a vector with the components turned into absolute values.
+func (v Vec4f) Abs() Vec4f {
+	return Vec4f{Abs(v[0]), Abs(v[1]), Abs(v[2]), Abs(v[3])}
+}
+
 // Add performs component-wise addition.
 func (v Vec4f) Add(other Vec4f) Vec4f {
 	return Vec4f{v[0] + other[0], v[1] + other[1], v[2] + other[2], v[3] + other[3]}

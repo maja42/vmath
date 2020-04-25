@@ -76,6 +76,11 @@ func (v Vec3f) XY() Vec2f {
 	return Vec2f{v[0], v[1]}
 }
 
+// Abs returns a vector with the components turned into absolute values.
+func (v Vec3f) Abs() Vec3f {
+	return Vec3f{Abs(v[0]), Abs(v[1]), Abs(v[2])}
+}
+
 // Add performs component-wise addition.
 func (v Vec3f) Add(other Vec3f) Vec3f {
 	return Vec3f{v[0] + other[0], v[1] + other[1], v[2] + other[2]}
