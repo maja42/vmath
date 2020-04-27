@@ -48,9 +48,21 @@ func (m *MatStack4f) Set(mat Mat4f) {
 	m.stack[len(m.stack)-1] = mat
 }
 
+// PushSet is equivalent to Push(), Set().
+func (m *MatStack4f) PushSet(mat Mat4f) {
+	m.Push()
+	m.Set(mat)
+}
+
 // SetIdent overwrites the top element with the identity matrix.
 func (m *MatStack4f) SetIdent() {
 	m.Set(Ident4f())
+}
+
+// PushIdent is equivalent to Push(), SetIdent().
+func (m *MatStack4f) PushIdent(mat Mat4f) {
+	m.Push()
+	m.SetIdent()
 }
 
 // MulRight multiplies the top element with the given matrix.
@@ -59,8 +71,20 @@ func (m *MatStack4f) MulRight(mat Mat4f) {
 	m.Set(top.Mul(mat))
 }
 
+// PushMulRight is equivalent to Push(), MulRight().
+func (m *MatStack4f) PushMulRight(mat Mat4f) {
+	m.Push()
+	m.MulRight(mat)
+}
+
 // MulLeft multiplies the given matrix with the top element and overwrites the top element with the result.
 func (m *MatStack4f) MulLeft(mat Mat4f) {
 	top := m.Top()
 	m.Set(mat.Mul(top))
+}
+
+// PushMulLeft is equivalent to Push(), MulLeft().
+func (m *MatStack4f) PushMulLeft(mat Mat4f) {
+	m.Push()
+	m.MulLeft(mat)
 }
