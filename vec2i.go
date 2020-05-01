@@ -160,6 +160,27 @@ func (v Vec2i) Dot(other Vec2i) int {
 	return v[0]*other[0] + v[1]*other[1]
 }
 
+// MagCross returns the length of the cross product vector.
+// This is equal to the magnitude of a 3D cross product vector, with the Z position implicitly set to zero.
+// It represents twice the signed area between the two vectors.
+func (v Vec2i) MagCross(other Vec2i) int {
+	return v[0]*other[1] - v[1]*other[0]
+}
+
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel.
+func (v Vec2i) IsParallel(other Vec2i) bool {
+	return v.MagCross(other) == 0
+}
+
+// NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.
+func (v Vec2i) NormalVec(onLeft bool) Vec2i {
+	if onLeft {
+		return Vec2i{-v[1], v[0]}
+	}
+	return Vec2i{v[1], -v[0]}
+}
+
 // Distance returns the euclidean distance to another position.
 func (v Vec2i) Distance(other Vec2i) float32 {
 	return other.Sub(v).Length()

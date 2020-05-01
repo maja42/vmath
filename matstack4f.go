@@ -60,7 +60,7 @@ func (m *MatStack4f) SetIdent() {
 }
 
 // PushIdent is equivalent to Push(), SetIdent().
-func (m *MatStack4f) PushIdent(mat Mat4f) {
+func (m *MatStack4f) PushIdent() {
 	m.Push()
 	m.SetIdent()
 }

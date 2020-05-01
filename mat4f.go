@@ -478,14 +478,14 @@ func (m Mat4f) EqualEps(other Mat4f, epsilon float32) bool {
 
 // Translation returns the translation vector of the matrix.
 func (m Mat4f) Translation() Vec3f {
-	return Vec3f{m[3], m[7], m[11]}
+	return Vec3f{m[12], m[13], m[14]}
 }
 
 // SetTranslation sets the translation vector of the matrix.
 func (m Mat4f) SetTranslation(translation Vec3f) Mat4f {
-	m[3] = translation[0]
-	m[7] = translation[1]
-	m[11] = translation[2]
+	m[12] = translation[0]
+	m[13] = translation[1]
+	m[14] = translation[2]
 	return m
 }
 
