@@ -173,6 +173,33 @@ func (v Vec3i) Dot(other Vec3i) int {
 	return v[0]*other[0] + v[1]*other[1] + v[2]*other[2]
 }
 
+// Cross performs a cross product with another vector.
+func (v Vec3i) Cross(other Vec3i) Vec3i {
+	return Vec3i{
+		v[1]*other[2] - v[2]*other[1],
+		v[2]*other[0] - v[0]*other[2],
+		v[0]*other[1] - v[1]*other[0],
+	}
+}
+
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel (but not collinear).
+func (v Vec3i) IsParallel(other Vec3i) bool {
+	return v.Cross(other).SquareLength() == 0
+}
+
+// IsCollinear returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec3i) IsCollinear(other Vec3i) bool {
+	return v.Vec3f().IsCollinear(other.Vec3f())
+}
+
+// IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec3i) IsCollinearEps(other Vec3i, eps float32) bool {
+	return v.Vec3f().IsCollinearEps(other.Vec3f(), eps)
+}
+
 // Distance returns the euclidean distance to another position.
 func (v Vec3i) Distance(other Vec3i) float32 {
 	return other.Sub(v).Length()

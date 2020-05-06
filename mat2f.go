@@ -121,11 +121,12 @@ func (m Mat2f) Transpose() Mat2f {
 // Inverse calculates the inverse matrix.
 // If the matrix cannot be inverted (singular), the identity matrix and false is returned.
 func (m Mat2f) Inverse() (Mat2f, bool) {
-	det := m.Det()
-	if Equalf(det, 0) {
+	detA, detB := m[0]*m[3], m[1]*m[2]
+	if Equalf(detA, detB) { // is determinant zero?
 		return Ident2f(), false
 	}
 
+	det := detA - detB
 	invDet := 1.0 / det
 	return Mat2f{
 		invDet * m[3], -invDet * m[1],

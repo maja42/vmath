@@ -188,6 +188,32 @@ func (v Vec3f) Cross(other Vec3f) Vec3f {
 	}
 }
 
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel.
+// Uses the default Epsilon as relative tolerance.
+func (v Vec3f) IsParallel(other Vec3f) bool {
+	return Equalf(v.Cross(other).SquareLength(), 0)
+}
+
+// IsParallel returns true if the given vector is parallel.
+// Vectors that point in opposite directions are also parallel.
+// Uses the given Epsilon as relative tolerance.
+func (v Vec3f) IsParallelEps(other Vec3f, eps float32) bool {
+	return EqualEps(v.Cross(other).SquareLength(), 0, eps)
+}
+
+// IsCollinear returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec3f) IsCollinear(other Vec3f) bool {
+	return v.Normalize().Equal(other.Normalize())
+}
+
+// IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec3f) IsCollinearEps(other Vec3f, eps float32) bool {
+	return v.Normalize().EqualEps(other.Normalize(), eps)
+}
+
 // Project returns a vector representing the projection of vector v onto "other".
 func (v Vec3f) Project(other Vec3f) Vec3f {
 	return other.MulScalar(v.Dot(other) / other.SquareLength())

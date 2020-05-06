@@ -168,9 +168,21 @@ func (v Vec2i) MagCross(other Vec2i) int {
 }
 
 // IsParallel returns true if the given vector is parallel.
-// Vectors that point in opposite directions are also parallel.
+// Vectors that point in opposite directions are also parallel (but not collinear).
 func (v Vec2i) IsParallel(other Vec2i) bool {
 	return v.MagCross(other) == 0
+}
+
+// IsCollinear returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec2i) IsCollinear(other Vec2i) bool {
+	return v.Vec2f().IsCollinear(other.Vec2f())
+}
+
+// IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
+// Uses the given Epsilon as relative tolerance.
+func (v Vec2i) IsCollinearEps(other Vec2i, eps float32) bool {
+	return v.Vec2f().IsCollinearEps(other.Vec2f(), eps)
 }
 
 // NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.

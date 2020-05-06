@@ -136,8 +136,8 @@ func det2x2(v00, v01, v10, v11 float32) float32 {
 // Inverse calculates the inverse matrix.
 // If the matrix cannot be inverted (singular), the identity matrix and false is returned.
 func (m Mat3f) Inverse() (Mat3f, bool) {
-	det := m.Det()
-	if Equalf(det, 0) {
+	det, detZero := m.isDetZero()
+	if detZero {
 		return Ident3f(), false
 	}
 
@@ -158,9 +158,9 @@ func (m Mat3f) Inverse() (Mat3f, bool) {
 // InverseTranspose inverts and transposes the matrix in a single step.
 // If the matrix cannot be inverted (singular), the identity matrix and false is returned.
 func (m Mat3f) InverseTranspose() (Mat3f, bool) {
-	det := m.Det()
+	det, detZero := m.isDetZero()
 
-	if Equalf(det, 0) {
+	if detZero {
 		return Ident3f(), false
 	}
 
@@ -180,8 +180,16 @@ func (m Mat3f) InverseTranspose() (Mat3f, bool) {
 
 // Det returns the determinant.
 func (m Mat3f) Det() float32 {
-	return m[0]*m[4]*m[8] + m[2]*m[3]*m[7] + m[1]*m[5]*m[6] -
-		m[0]*m[5]*m[7] - m[1]*m[3]*m[8] - m[2]*m[4]*m[6]
+	return m[0]*m[4]*m[8] - m[0]*m[5]*m[7] + m[2]*m[3]*m[7] -
+		m[1]*m[3]*m[8] + m[1]*m[5]*m[6] - m[2]*m[4]*m[6]
+}
+
+// isDetZero returns the determinant and if it is zero.
+// Ensures that the zero float-comparison is not affected by cancellation.
+func (m Mat3f) isDetZero() (float32, bool) {
+	detA := m[0]*m[4]*m[8] + m[2]*m[3]*m[7] + m[1]*m[5]*m[6]
+	detB := m[0]*m[5]*m[7] + m[1]*m[3]*m[8] + m[2]*m[4]*m[6]
+	return detA - detB, Equalf(detA, detB)
 }
 
 // Add performs a component-wise addition.

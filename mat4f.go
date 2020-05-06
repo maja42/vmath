@@ -371,8 +371,20 @@ func (m Mat4f) Inverse() (Mat4f, bool) {
 	return ret.MulScalar(1 / det), true
 }
 
+// InverseTranspose inverts and transposes the matrix in a single step.
+// If the matrix cannot be inverted (singular), the identity matrix and false is returned.
+func (m Mat4f) InverseTranspose() (Mat4f, bool) {
+	// Note: This can probably be done more efficiently by merging both operations into one (like in Mat3f)
+	inv, ok := m.Inverse()
+	if !ok {
+		return inv, ok
+	}
+	return inv.Transpose(), true
+}
+
 // Det returns the determinant.
 func (m Mat4f) Det() float32 {
+	// Note: isDetZero is not needed, since the +/- terms are mixed, avoiding big-number cancellation as good as possible.
 	return m[3]*m[6]*m[9]*m[12] - m[2]*m[7]*m[9]*m[12] - m[3]*m[5]*m[10]*m[12] + m[1]*m[7]*m[10]*m[12] +
 		m[2]*m[5]*m[11]*m[12] - m[1]*m[6]*m[11]*m[12] - m[3]*m[6]*m[8]*m[13] + m[2]*m[7]*m[8]*m[13] +
 		m[3]*m[4]*m[10]*m[13] - m[0]*m[7]*m[10]*m[13] - m[2]*m[4]*m[11]*m[13] + m[0]*m[6]*m[11]*m[13] +
