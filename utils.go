@@ -72,13 +72,13 @@ func Wrapi(v, min, max int) int {
 	return int(Wrapf(float32(v), float32(min), float32(max)))
 }
 
-// Radians converts degrees into radians.
-func Radians(deg float32) float32 {
+// ToRadians converts degrees into radians.
+func ToRadians(deg float32) float32 {
 	return math.Pi * deg / 180.0
 }
 
-// Degrees converts radians into degrees.
-func Degrees(rad float32) float32 {
+// ToDegrees converts radians into degrees.
+func ToDegrees(rad float32) float32 {
 	return rad * (180.0 / math.Pi)
 }
 

@@ -191,13 +191,10 @@ func (v Vec3i) IsParallel(other Vec3i) bool {
 // IsCollinear returns true if the given vector is collinear (pointing in the same direction).
 // Uses the given Epsilon as relative tolerance.
 func (v Vec3i) IsCollinear(other Vec3i) bool {
-	return v.Vec3f().IsCollinear(other.Vec3f())
-}
-
-// IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
-// Uses the given Epsilon as relative tolerance.
-func (v Vec3i) IsCollinearEps(other Vec3i, eps float32) bool {
-	return v.Vec3f().IsCollinearEps(other.Vec3f(), eps)
+	return v.IsParallel(other) &&
+		(v[0] >= 0) == (other[0] >= 0) && // same x direction
+		(v[1] >= 0) == (other[1] >= 0) && // same y direction
+		(v[2] >= 0) == (other[2] >= 0) // same z direction
 }
 
 // Distance returns the euclidean distance to another position.

@@ -50,15 +50,15 @@ func TestClampi(t *testing.T) {
 }
 
 func TestDegrees(t *testing.T) {
-	AssertFloat(t, 0, Degrees(0))
-	AssertFloat(t, 90, Degrees(pi/2))
-	AssertFloat(t, 180, Degrees(pi))
-	AssertFloat(t, 270, Degrees(3*pi/2))
-	AssertFloat(t, 360, Degrees(2*pi))
-	AssertFloat(t, 720, Degrees(4*pi))
+	AssertFloat(t, 0, ToDegrees(0))
+	AssertFloat(t, 90, ToDegrees(pi/2))
+	AssertFloat(t, 180, ToDegrees(pi))
+	AssertFloat(t, 270, ToDegrees(3*pi/2))
+	AssertFloat(t, 360, ToDegrees(2*pi))
+	AssertFloat(t, 720, ToDegrees(4*pi))
 
-	AssertFloat(t, -180, Degrees(-pi))
-	AssertFloat(t, -360, Degrees(-2*pi))
+	AssertFloat(t, -180, ToDegrees(-pi))
+	AssertFloat(t, -360, ToDegrees(-2*pi))
 }
 
 func TestEqualEps(t *testing.T) {
@@ -144,15 +144,15 @@ func TestNormalizeDegrees(t *testing.T) {
 }
 
 func TestNormalizeRadians(t *testing.T) {
-	AssertFloat(t, 0, Radians(0))
-	AssertFloat(t, pi/2, Radians(90))
-	AssertFloat(t, pi, Radians(180))
-	AssertFloat(t, 3*pi/2, Radians(270))
-	AssertFloat(t, 2*pi, Radians(360))
-	AssertFloat(t, 4*pi, Radians(720))
+	AssertFloat(t, 0, ToRadians(0))
+	AssertFloat(t, pi/2, ToRadians(90))
+	AssertFloat(t, pi, ToRadians(180))
+	AssertFloat(t, 3*pi/2, ToRadians(270))
+	AssertFloat(t, 2*pi, ToRadians(360))
+	AssertFloat(t, 4*pi, ToRadians(720))
 
-	AssertFloat(t, -pi, Radians(-180))
-	AssertFloat(t, -2*pi, Radians(-360))
+	AssertFloat(t, -pi, ToRadians(-180))
+	AssertFloat(t, -2*pi, ToRadians(-360))
 }
 
 func TestPointToLineDistance2D(t *testing.T) {
@@ -193,15 +193,15 @@ func TestPolarToCartesian2D(t *testing.T) {
 }
 
 func TestRadians(t *testing.T) {
-	AssertFloat(t, 0, Radians(0))
-	AssertFloat(t, pi/2, Radians(90))
-	AssertFloat(t, pi, Radians(180))
-	AssertFloat(t, 3*pi/2, Radians(270))
-	AssertFloat(t, 2*pi, Radians(360))
-	AssertFloat(t, 4*pi, Radians(720))
+	AssertFloat(t, 0, ToRadians(0))
+	AssertFloat(t, pi/2, ToRadians(90))
+	AssertFloat(t, pi, ToRadians(180))
+	AssertFloat(t, 3*pi/2, ToRadians(270))
+	AssertFloat(t, 2*pi, ToRadians(360))
+	AssertFloat(t, 4*pi, ToRadians(720))
 
-	AssertFloat(t, -pi, Radians(-180))
-	AssertFloat(t, -2*pi, Radians(-360))
+	AssertFloat(t, -pi, ToRadians(-180))
+	AssertFloat(t, -2*pi, ToRadians(-360))
 }
 
 func TestWrapf(t *testing.T) {

@@ -188,13 +188,17 @@ func (v Vec2f) IsParallelEps(other Vec2f, eps float32) bool {
 // IsCollinear returns true if the given vector is collinear (pointing in the same direction).
 // Uses the given Epsilon as relative tolerance.
 func (v Vec2f) IsCollinear(other Vec2f) bool {
-	return v.Normalize().Equal(other.Normalize())
+	return v.IsCollinearEps(other, Epsilon)
 }
 
 // IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
 // Uses the given Epsilon as relative tolerance.
 func (v Vec2f) IsCollinearEps(other Vec2f, eps float32) bool {
-	return v.Normalize().EqualEps(other.Normalize(), eps)
+	// Note: Vectors that are nearly zero will not be reported as collinear if they are facing
+	// in different directions, even if their size falls within epsilon.
+	return EqualEps(v[0]*other[1], v[1]*other[0], eps) && // parallel
+		Signbit(v[0]) == Signbit(other[0]) && // same x direction
+		Signbit(v[1]) == Signbit(other[1]) // same y direction
 }
 
 // NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.

@@ -205,13 +205,18 @@ func (v Vec3f) IsParallelEps(other Vec3f, eps float32) bool {
 // IsCollinear returns true if the given vector is collinear (pointing in the same direction).
 // Uses the given Epsilon as relative tolerance.
 func (v Vec3f) IsCollinear(other Vec3f) bool {
-	return v.Normalize().Equal(other.Normalize())
+	return v.IsCollinearEps(other, Epsilon)
 }
 
 // IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
 // Uses the given Epsilon as relative tolerance.
 func (v Vec3f) IsCollinearEps(other Vec3f, eps float32) bool {
-	return v.Normalize().EqualEps(other.Normalize(), eps)
+	// Note: Vectors that are nearly zero will not be reported as collinear if they are facing
+	// in different directions, even if their size falls within epsilon.
+	return v.IsParallelEps(other, eps) &&
+		Signbit(v[0]) == Signbit(other[0]) && // same x direction
+		Signbit(v[1]) == Signbit(other[1]) && // same y direction
+		Signbit(v[2]) == Signbit(other[2]) // same y direction
 }
 
 // Project returns a vector representing the projection of vector v onto "other".

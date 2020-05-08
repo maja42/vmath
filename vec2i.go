@@ -174,15 +174,10 @@ func (v Vec2i) IsParallel(other Vec2i) bool {
 }
 
 // IsCollinear returns true if the given vector is collinear (pointing in the same direction).
-// Uses the given Epsilon as relative tolerance.
 func (v Vec2i) IsCollinear(other Vec2i) bool {
-	return v.Vec2f().IsCollinear(other.Vec2f())
-}
-
-// IsCollinearEps returns true if the given vector is collinear (pointing in the same direction).
-// Uses the given Epsilon as relative tolerance.
-func (v Vec2i) IsCollinearEps(other Vec2i, eps float32) bool {
-	return v.Vec2f().IsCollinearEps(other.Vec2f(), eps)
+	return v.MagCross(other) == 0 && // parallel
+		(v[0] >= 0) == (other[0] >= 0) && // same x direction
+		(v[1] >= 0) == (other[1] >= 0) // same y direction
 }
 
 // NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.
@@ -191,6 +186,11 @@ func (v Vec2i) NormalVec(onLeft bool) Vec2i {
 		return Vec2i{-v[1], v[0]}
 	}
 	return Vec2i{v[1], -v[0]}
+}
+
+// Project returns a vector representing the projection of vector v onto "other".
+func (v Vec2i) Project(other Vec2i) Vec2f {
+	return v.Vec2f().Project(other.Vec2f())
 }
 
 // Distance returns the euclidean distance to another position.
