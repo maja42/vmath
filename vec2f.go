@@ -64,6 +64,11 @@ func (v Vec2f) Y() float32 {
 	return v[1]
 }
 
+// IsOrthogonal returns true if the vector is horizontal or vertical (one of its components is zero).
+func (v Vec2f) IsOrthogonal() bool {
+	return v[0] == 0 || v[1] == 0
+}
+
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec2f) Abs() Vec2f {
 	return Vec2f{Abs(v[0]), Abs(v[1])}
