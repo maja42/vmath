@@ -15,23 +15,8 @@ func (v Vec4f) Format(format string) string {
 	return fmt.Sprintf(format, v[0], v[1], v[2], v[3])
 }
 
-// XVec4f returns a 4D vector representing the X-axis.
-func XVec4f() Vec4f {
-	return Vec4f{1, 0, 0, 0}
-}
-
-// YVec4f returns a 4D vector representing the Y-axis.
-func YVec4f() Vec4f {
-	return Vec4f{0, 1, 0, 0}
-}
-
-// ZVec4f returns a 4D vector representing the Z-axis.
-func ZVec4f() Vec4f {
-	return Vec4f{0, 0, 1, 0}
-}
-
 // Vec4i returns an integer representation of the vector.
-// Decimals are truncated (rounded down).
+// Decimals are truncated.
 func (v Vec4f) Vec4i() Vec4i {
 	return Vec4i{int(v[0]), int(v[1]), int(v[2]), int(v[3])}
 }
@@ -194,7 +179,7 @@ func (v Vec4f) Project(other Vec4f) Vec4f {
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec4f) Lerp(other Vec4f, t float32) Vec4f {
-	return v.Mul(other.MulScalar(t))
+	return v.MulScalar(1 - t).Add(other.MulScalar(t))
 }
 
 // Distance returns the euclidean distance to another position.

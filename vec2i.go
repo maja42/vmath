@@ -15,16 +15,6 @@ func (v Vec2i) Format(format string) string {
 	return fmt.Sprintf(format, v[0], v[1])
 }
 
-// XVec2i returns a 2D vector representing the X-axis.
-func XVec2i() Vec2i {
-	return Vec2i{1, 0}
-}
-
-// YVec2i returns a 2D vector representing the Y-axis.
-func YVec2i() Vec2i {
-	return Vec2i{0, 1}
-}
-
 // Vec2f returns a float representation of the vector.
 func (v Vec2i) Vec2f() Vec2f {
 	return Vec2f{float32(v[0]), float32(v[1])}
@@ -113,11 +103,13 @@ func (v Vec2i) MulScalarf(s float32) Vec2f {
 }
 
 // Div performs a component-wise division.
+// Decimals are truncated.
 func (v Vec2i) Div(other Vec2i) Vec2i {
 	return Vec2i{v[0] / other[0], v[1] / other[1]}
 }
 
 // DivScalar performs a scalar division.
+// Decimals are truncated.
 func (v Vec2i) DivScalar(s int) Vec2i {
 	return Vec2i{v[0] / s, v[1] / s}
 }
@@ -129,7 +121,7 @@ func (v Vec2i) DivScalarf(s float32) Vec2f {
 
 // Length returns the vector's length.
 func (v Vec2i) Length() float32 {
-	return Hypot(float32(v[0]*v[0]), float32(v[1]*v[1]))
+	return Hypot(float32(v[0]), float32(v[1]))
 }
 
 // SquareLength returns the vector's squared length.

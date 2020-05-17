@@ -43,6 +43,17 @@ func RectfFromEdges(left, right, bottom, top float32) Rectf {
 	return RectfFromCorners(Vec2f{left, bottom}, Vec2f{right, top})
 }
 
+// Normalize ensures that the Min position is smaller than the Max position in every dimension.
+func (r Rectf) Normalize() Rectf {
+	if r.Min[0] > r.Max[0] {
+		r.Min[0], r.Max[0] = r.Max[0], r.Min[0]
+	}
+	if r.Min[1] > r.Max[1] {
+		r.Min[1], r.Max[1] = r.Max[1], r.Min[1]
+	}
+	return r
+}
+
 func (r Rectf) String() string {
 	return fmt.Sprintf("Rectf([%f x %f]-[%f x %f])",
 		r.Min[0], r.Min[1],
@@ -50,7 +61,7 @@ func (r Rectf) String() string {
 }
 
 // Recti returns an integer representation of the rectangle.
-// Decimals are truncated (rounded down).
+// Decimals are truncated.
 func (r Rectf) Recti() Recti {
 	return Recti{
 		r.Min.Vec2i(),
@@ -81,6 +92,18 @@ func (r Rectf) Bottom() float32 {
 // Top returns the rectangle's top position (bigger Y).
 func (r Rectf) Top() float32 {
 	return r.Max[1]
+}
+
+// SetPos changes the rectangle position by modifying min, but keeps the rectangle's size.
+func (r Rectf) SetPos(pos Vec2f) {
+	size := r.Size()
+	r.Min = pos
+	r.Max = r.Min.Add(size)
+}
+
+// SetSize changes the rectangle size by keeping the min-position.
+func (r Rectf) SetSize(size Vec2f) {
+	r.Max = r.Min.Add(size)
 }
 
 // Add moves the rectangle with the given vector by adding it to the min- and max- components.

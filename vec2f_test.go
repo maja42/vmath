@@ -6,8 +6,39 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestVec2f_String(t *testing.T) {
+	assert.Equal(t, "Vec2f[5.000000 x -3.100000]", Vec2f{5, -3.1}.String())
+}
+
+func TestVec2f_Format(t *testing.T) {
+	assert.Equal(t, "vec 5, -3", Vec2f{5, -3.1}.Format("vec %.0f, %.0f"))
+}
+
+func TestVec2f_IsOrthogonal(t *testing.T) {
+	assert.True(t, Vec2f{2, 0}.IsOrthogonal())
+	assert.True(t, Vec2f{-2, 0}.IsOrthogonal())
+	assert.True(t, Vec2f{0, 32}.IsOrthogonal())
+	assert.True(t, Vec2f{0, -12}.IsOrthogonal())
+
+	assert.False(t, Vec2f{2, 2}.IsOrthogonal())
+	assert.False(t, Vec2f{-0.0001, 1}.IsOrthogonal())
+}
+
+func TestVec2f_Abs(t *testing.T) {
+	AssertVec2f(t, Vec2f{2, 9}, Vec2f{2, 9}.Abs())
+	AssertVec2f(t, Vec2f{2, 9}, Vec2f{-2, 9}.Abs())
+	AssertVec2f(t, Vec2f{2, 9}, Vec2f{2, -9}.Abs())
+	AssertVec2f(t, Vec2f{2, 9}, Vec2f{-2, -9}.Abs())
+}
+
 func TestVec2f_Add(t *testing.T) {
 	AssertVec2f(t, Vec2f{4, 6}, Vec2f{2, 9}.Add(Vec2f{2, -3}))
+}
+
+func TestVec2f_IsZero(t *testing.T) {
+	assert.True(t, Vec2f{0, 0}.IsZero())
+	assert.False(t, Vec2f{0.0001, 0}.IsZero())
+	assert.False(t, Vec2f{0, 0.0001}.IsZero())
 }
 
 func TestVec2f_AddScalar(t *testing.T) {
@@ -71,6 +102,16 @@ func TestVec2f_IsParallel(t *testing.T) {
 	assert.True(t, Vec2f{1, 1}.IsParallel(Vec2f{-1, -1}))
 	assert.True(t, Vec2f{1, 0}.IsParallel(Vec2f{1, 0}))
 	assert.False(t, Vec2f{1, 1}.IsParallel(Vec2f{-1, 2}))
+}
+
+func TestVec2f_IsCollinear(t *testing.T) {
+	assert.True(t, Vec2f{1, 1}.IsCollinear(Vec2f{5, 5}))
+	assert.False(t, Vec2f{1, 1}.IsCollinear(Vec2f{-1, -1}))
+
+	assert.True(t, Vec2f{0, 1}.IsCollinear(Vec2f{0, 1}))
+	assert.False(t, Vec2f{0, 1}.IsCollinear(Vec2f{0, -1}))
+
+	assert.False(t, Vec2f{1, 1}.IsCollinear(Vec2f{-1, 2}))
 }
 
 func TestVec2f_Length(t *testing.T) {
@@ -162,10 +203,6 @@ func TestVec2f_SquareLength(t *testing.T) {
 	AssertFloat(t, 13, Vec2f{2, -3}.SquareLength())
 }
 
-func TestVec2f_String(t *testing.T) {
-	assert.Equal(t, "Vec2f[5.000000 x -3.100000]", Vec2f{5, -3.1}.String())
-}
-
 func TestVec2f_Sub(t *testing.T) {
 	AssertVec2f(t, Vec2f{0, 12}, Vec2f{2, 9}.Sub(Vec2f{2, -3}))
 }
@@ -194,12 +231,4 @@ func TestVec2f_X(t *testing.T) {
 
 func TestVec2f_Y(t *testing.T) {
 	AssertFloat(t, 12, Vec2f{-45, 12}.Y())
-}
-
-func TestXVec2f(t *testing.T) {
-	assert.Equal(t, Vec2f{1, 0}, XVec2f())
-}
-
-func TestYVec2f(t *testing.T) {
-	assert.Equal(t, Vec2f{0, 1}, YVec2f())
 }

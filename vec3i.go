@@ -16,21 +16,6 @@ func (v Vec3i) Format(format string) string {
 	return fmt.Sprintf(format, v[0], v[1], v[2])
 }
 
-// XVec3i returns a 3D vector representing the X-axis.
-func XVec3i() Vec3i {
-	return Vec3i{1, 0, 0}
-}
-
-// YVec3i returns a 3D vector representing the Y-axis.
-func YVec3i() Vec3i {
-	return Vec3i{0, 1, 0}
-}
-
-// ZVec3i returns a 3D vector representing the Z-axis.
-func ZVec3i() Vec3i {
-	return Vec3i{0, 0, 1}
-}
-
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec3i) Abs() Vec3i {
 	return Vec3i{Absi(v[0]), Absi(v[1]), Absi(v[2])}

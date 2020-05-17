@@ -15,18 +15,8 @@ func (v Vec2f) Format(format string) string {
 	return fmt.Sprintf(format, v[0], v[1])
 }
 
-// XVec2f returns a 2D vector representing the X-axis.
-func XVec2f() Vec2f {
-	return Vec2f{1, 0}
-}
-
-// YVec2f returns a 2D vector representing the Y-axis.
-func YVec2f() Vec2f {
-	return Vec2f{0, 1}
-}
-
 // Vec2i returns an integer representation of the vector.
-// Decimals are truncated (rounded down).
+// Decimals are truncated.
 func (v Vec2f) Vec2i() Vec2i {
 	return Vec2i{int(v[0]), int(v[1])}
 }

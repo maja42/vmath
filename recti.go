@@ -43,6 +43,17 @@ func RectiFromEdges(left, right, bottom, top int) Recti {
 	return RectiFromCorners(Vec2i{left, bottom}, Vec2i{right, top})
 }
 
+// Normalize ensures that the Min position is smaller than the Max position in every dimension.
+func (r Recti) Normalize() Recti {
+	if r.Min[0] > r.Max[0] {
+		r.Min[0], r.Max[0] = r.Max[0], r.Min[0]
+	}
+	if r.Min[1] > r.Max[1] {
+		r.Min[1], r.Max[1] = r.Max[1], r.Min[1]
+	}
+	return r
+}
+
 func (r *Recti) String() string {
 	return fmt.Sprintf("Recti([%d x %d]-[%d x %d])",
 		r.Min[0], r.Min[1],
@@ -80,6 +91,18 @@ func (r Recti) Bottom() int {
 // Top returns the rectangle's top position (bigger Y).
 func (r Recti) Top() int {
 	return r.Max[1]
+}
+
+// SetPos changes the rectangle position by modifying min, but keeps the rectangle's size.
+func (r Recti) SetPos(pos Vec2i) {
+	size := r.Size()
+	r.Min = pos
+	r.Max = r.Min.Add(size)
+}
+
+// SetSize changes the rectangle size by keeping the min-position.
+func (r Recti) SetSize(size Vec2i) {
+	r.Max = r.Min.Add(size)
 }
 
 // Add moves the rectangle with the given vector by adding it to the min- and max- components.

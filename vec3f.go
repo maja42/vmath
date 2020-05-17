@@ -16,23 +16,8 @@ func (v Vec3f) Format(format string) string {
 	return fmt.Sprintf(format, v[0], v[1], v[2])
 }
 
-// XVec3f returns a 3D vector representing the X-axis.
-func XVec3f() Vec3f {
-	return Vec3f{1, 0, 0}
-}
-
-// YVec3f returns a 3D vector representing the Y-axis.
-func YVec3f() Vec3f {
-	return Vec3f{0, 1, 0}
-}
-
-// ZVec3f returns a 3D vector representing the Z-axis.
-func ZVec3f() Vec3f {
-	return Vec3f{0, 0, 1}
-}
-
 // Vec3i returns an integer representation of the vector.
-// Decimals are truncated (rounded down).
+// Decimals are truncated.
 func (v Vec3f) Vec3i() Vec3i {
 	return Vec3i{int(v[0]), int(v[1]), int(v[2])}
 }
@@ -74,6 +59,11 @@ func (v Vec3f) Z() float32 {
 // XY returns a 2D vector with the X and Y components.
 func (v Vec3f) XY() Vec2f {
 	return Vec2f{v[0], v[1]}
+}
+
+// IsOrthogonal returns true if the vector is parallel to the X, Y or Z axis (one of its components is zero).
+func (v Vec3f) IsOrthogonal() bool {
+	return v[0] == 0 || v[1] == 0 || v[2] == 0
 }
 
 // Abs returns a vector with the components turned into absolute values.
@@ -227,20 +217,14 @@ func (v Vec3f) Project(other Vec3f) Vec3f {
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec3f) Lerp(other Vec3f, t float32) Vec3f {
-	return v.Mul(other.MulScalar(t))
+	return v.MulScalar(1 - t).Add(other.MulScalar(t))
 }
 
 // Angle returns the angle between two vectors in radians.
 func (v Vec3f) Angle(other Vec3f) float32 {
 	v = v.Normalize()
 	other = other.Normalize()
-
-	if v.Dot(other) < 0 {
-		n := v.Add(other).Length() / 2
-		return math.Pi - 2.0*Asin(Min(n, 1))
-	}
-	n := v.Sub(other).Length() / 2
-	return 2.0 * Asin(Min(n, 1))
+	return Acos(v.Dot(other))
 }
 
 // RotationTo returns the shortest rotation to the destination vector.
