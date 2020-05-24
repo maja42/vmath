@@ -73,6 +73,12 @@ func (r *Recti) Size() Vec2i {
 	return r.Max.Sub(r.Min)
 }
 
+// Area returns the rectangle's area.
+func (r Recti) Area() int {
+	size := r.Max.Sub(r.Min)
+	return size[0] * size[1]
+}
+
 // Left returns the rectangle's left position (smaller X).
 func (r Recti) Left() int {
 	return r.Min[0]

@@ -212,7 +212,7 @@ func (v Vec2f) Project(other Vec2f) Vec2f {
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec2f) Lerp(other Vec2f, t float32) Vec2f {
-	return v.MulScalar(1 - t).Add(other.MulScalar(t))
+	return other.Sub(v).MulScalar(t).Add(v)
 }
 
 // Angle returns the angle relative to another vector.

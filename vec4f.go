@@ -179,7 +179,7 @@ func (v Vec4f) Project(other Vec4f) Vec4f {
 // Lerp performs a linear interpolation between two vectors.
 // The parameter t should be in range [0, 1].
 func (v Vec4f) Lerp(other Vec4f, t float32) Vec4f {
-	return v.MulScalar(1 - t).Add(other.MulScalar(t))
+	return other.Sub(v).MulScalar(t).Add(v)
 }
 
 // Distance returns the euclidean distance to another position.

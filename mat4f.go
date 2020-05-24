@@ -525,12 +525,10 @@ func (m Mat4f) SetScaling(scaling Vec3f) Mat4f {
 
 // Scale scales the matrix.
 func (m Mat4f) Scale(scaling Vec3f) Mat4f {
-	return Mat4fFromCols(
-		m.Col(0).MulScalar(scaling[0]),
-		m.Col(1).MulScalar(scaling[1]),
-		m.Col(2).MulScalar(scaling[2]),
-		m.Col(3),
-	)
+	m[0] *= scaling[0]
+	m[5] *= scaling[1]
+	m[10] *= scaling[2]
+	return m
 }
 
 // Rotation returns a quaternion with the rotation of the matrix.

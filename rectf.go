@@ -11,6 +11,7 @@ type Rectf struct {
 }
 
 // RectfFromCorners creates a new rectangle given two opposite corners.
+// If necessary, coordinates are swapped to create a normalized rectangle.
 func RectfFromCorners(c1, c2 Vec2f) Rectf {
 	if c1[0] > c2[0] {
 		c1[0], c2[0] = c2[0], c1[0]
@@ -22,7 +23,7 @@ func RectfFromCorners(c1, c2 Vec2f) Rectf {
 }
 
 // RectfFromPosSize creates a new rectangle with the given size and position.
-// Negative dimensions are correctly inverted.
+// Negative dimensions are inverted to create a normalized rectangle.
 func RectfFromPosSize(pos, size Vec2f) Rectf {
 	if size[0] < 0 {
 		size[0] = -size[0]
@@ -39,6 +40,7 @@ func RectfFromPosSize(pos, size Vec2f) Rectf {
 }
 
 // RectfFromEdges creates a new rectangle with the given edge positions.
+// If necessary, edges are swapped to create a normalized rectangle.
 func RectfFromEdges(left, right, bottom, top float32) Rectf {
 	return RectfFromCorners(Vec2f{left, bottom}, Vec2f{right, top})
 }
@@ -72,6 +74,12 @@ func (r Rectf) Recti() Recti {
 // Size returns the rectangle's dimensions.
 func (r Rectf) Size() Vec2f {
 	return r.Max.Sub(r.Min)
+}
+
+// Area returns the rectangle's area.
+func (r Rectf) Area() float32 {
+	size := r.Max.Sub(r.Min)
+	return size[0] * size[1]
 }
 
 // Left returns the rectangle's left position (smaller X).
@@ -122,13 +130,13 @@ func (r Rectf) Sub(v Vec2f) Rectf {
 	}
 }
 
-// Overlaps checks if this rectangle overlaps another rectangle.
-// Touching rectangles where floats are exactly equal are not considered to overlap.
-func (r Rectf) Overlaps(other Rectf) bool {
-	return r.Min[0] < other.Max[0] &&
-		r.Max[0] > other.Min[0] &&
-		r.Max[1] > other.Min[1] &&
-		r.Min[1] < other.Max[1]
+// Intersects checks if this rectangle intersects another rectangle.
+// Touching rectangles where floats are exactly equal are not considered to intersect.
+func (r Rectf) Intersects(other Rectf) bool {
+	return r.Min[0] <= other.Max[0] &&
+		r.Max[0] >= other.Min[0] &&
+		r.Max[1] >= other.Min[1] &&
+		r.Min[1] <= other.Max[1]
 }
 
 // Contains checks if a given point resides within the rectangle.
