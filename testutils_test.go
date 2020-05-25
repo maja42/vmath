@@ -16,7 +16,7 @@ func AssertVec2f(t *testing.T, expected, actual Vec2f) {
 	delta := float32(eps)
 	diff := expected.Sub(actual)
 	if diff[0] < -delta || diff[0] > delta || diff[1] < -delta || diff[1] > delta {
-		t.Errorf("Max difference between %v and %v allowed is %v, but difference was %v", expected, actual, delta, diff)
+		t.Errorf("Expected: %v, was: %v; Max difference is %v, but was %v", expected, actual, delta, diff)
 	}
 }
 
@@ -27,7 +27,7 @@ func AssertVec3f(t *testing.T, expected, actual Vec3f) {
 	if diff[0] < -delta || diff[0] > delta ||
 		diff[1] < -delta || diff[1] > delta ||
 		diff[2] < -delta || diff[2] > delta {
-		t.Errorf("Max difference between %v and %v allowed is %v, but difference was %v", expected, actual, delta, diff)
+		t.Errorf("Expected: %v, was: %v; Max difference is %v, but was %v", expected, actual, delta, diff)
 	}
 }
 
@@ -39,6 +39,6 @@ func AssertVec4f(t *testing.T, expected, actual Vec4f) {
 		diff[1] < -delta || diff[1] > delta ||
 		diff[2] < -delta || diff[2] > delta ||
 		diff[3] < -delta || diff[3] > delta {
-		t.Errorf("Max difference between %v and %v allowed is %v, but difference was %v", expected, actual, delta, diff)
+		t.Errorf("Expected: %v, was: %v; Max difference is %v, but was %v", expected, actual, delta, diff)
 	}
 }

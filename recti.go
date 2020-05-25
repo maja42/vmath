@@ -54,7 +54,7 @@ func (r Recti) Normalize() Recti {
 	return r
 }
 
-func (r *Recti) String() string {
+func (r Recti) String() string {
 	return fmt.Sprintf("Recti([%d x %d]-[%d x %d])",
 		r.Min[0], r.Min[1],
 		r.Max[0], r.Max[1])
@@ -144,19 +144,19 @@ func (r Recti) OverlapsOrTouches(other Recti) bool {
 		r.Min[1] <= other.Max[1]
 }
 
+// Contains checks if a given point resides within the rectangle.
+// If the point is on an edge, it is also considered to be contained within the rectangle.
+func (r Recti) ContainsPoint(point Vec2i) bool {
+	return point[0] >= r.Min[0] && point[0] <= r.Max[0] &&
+		point[1] >= r.Min[1] && point[1] <= r.Max[1]
+}
+
 // ContainsRecti checks if this rectangle completely contains another rectangle.
 func (r Recti) ContainsRecti(other Recti) bool {
 	return r.Min[0] <= other.Min[0] &&
 		r.Max[0] >= other.Max[0] &&
 		r.Min[1] <= other.Min[1] &&
 		r.Max[1] >= other.Max[1]
-}
-
-// Contains checks if a given point resides within the rectangle.
-// If the point is on an edge, it is also considered to be contained within the rectangle.
-func (r Recti) Contains(point Vec2i) bool {
-	return point[0] >= r.Min[0] && point[0] <= r.Max[0] &&
-		point[1] >= r.Min[1] && point[1] <= r.Max[1]
 }
 
 // Merge returns a rectangle that contains both smaller rectangles.
@@ -170,4 +170,33 @@ func (r Recti) Merge(other Recti) Recti {
 		Maxi(r.Max[1], other.Max[1]),
 	}
 	return Recti{min, max}
+}
+
+// SquarePointDistance returns the squared distance between the rectangle and a point.
+// If the point is contained within the rectangle, 0 is returned.
+// Otherwise, the squared distance between the point and the nearest edge or corner is returned.
+func (r Recti) SquarePointDistance(pos Vec2i) int {
+	// Source: "Nearest Neighbor Queries" by N. Roussopoulos, S. Kelley and F. Vincent, ACM SIGMOD, pages 71-79, 1995.
+	sum := 0
+	for dim, val := range pos {
+		if val < r.Min[dim] {
+			// below/left of edge
+			d := val - r.Min[dim]
+			sum += d * d
+		} else if val > r.Max[dim] {
+			// above/right of edge
+			d := val - r.Max[dim]
+			sum += d * d
+		} else {
+			sum += 0
+		}
+	}
+	return sum
+}
+
+// PointDistance returns the distance between the rectangle and a point.
+// If the point is contained within the rectangle, 0 is returned.
+// Otherwise, the distance between the point and the nearest edge or corner is returned.
+func (r Recti) PointDistance(pos Vec2i) float32 {
+	return Sqrt(float32(r.SquarePointDistance(pos)))
 }

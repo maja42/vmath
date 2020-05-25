@@ -71,6 +71,15 @@ func (r Rectf) Recti() Recti {
 	}
 }
 
+// Round returns an integer representation of the rectangle.
+// Decimals are rounded.
+func (r Rectf) Round() Recti {
+	return Recti{
+		r.Min.Round(),
+		r.Max.Round(),
+	}
+}
+
 // Size returns the rectangle's dimensions.
 func (r Rectf) Size() Vec2f {
 	return r.Max.Sub(r.Min)
@@ -139,9 +148,9 @@ func (r Rectf) Intersects(other Rectf) bool {
 		r.Min[1] <= other.Max[1]
 }
 
-// Contains checks if a given point resides within the rectangle.
+// ContainsPoint checks if a given point resides within the rectangle.
 // If the point is on an edge, it is also considered to be contained within the rectangle.
-func (r Rectf) Contains(point Vec2f) bool {
+func (r Rectf) ContainsPoint(point Vec2f) bool {
 	return point[0] >= r.Min[0] && point[0] <= r.Max[0] &&
 		point[1] >= r.Min[1] && point[1] <= r.Max[1]
 }
@@ -165,4 +174,33 @@ func (r Rectf) Merge(other Rectf) Rectf {
 		Max(r.Max[1], other.Max[1]),
 	}
 	return Rectf{min, max}
+}
+
+// SquarePointDistance returns the squared distance between the rectangle and a point.
+// If the point is contained within the rectangle, 0 is returned.
+// Otherwise, the squared distance between the point and the nearest edge or corner is returned.
+func (r Rectf) SquarePointDistance(pos Vec2f) float32 {
+	// Source: "Nearest Neighbor Queries" by N. Roussopoulos, S. Kelley and F. Vincent, ACM SIGMOD, pages 71-79, 1995.
+	sum := float32(0.0)
+	for dim, val := range pos {
+		if val < r.Min[dim] {
+			// below/left of edge
+			d := val - r.Min[dim]
+			sum += d * d
+		} else if val > r.Max[dim] {
+			// above/right of edge
+			d := val - r.Max[dim]
+			sum += d * d
+		} else {
+			sum += 0
+		}
+	}
+	return sum
+}
+
+// PointDistance returns the distance between the rectangle and a point.
+// If the point is contained within the rectangle, 0 is returned.
+// Otherwise, the distance between the point and the nearest edge or corner is returned.
+func (r Rectf) PointDistance(pos Vec2f) float32 {
+	return Sqrt(r.SquarePointDistance(pos))
 }
