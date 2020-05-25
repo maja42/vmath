@@ -2,6 +2,8 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
 )
 
 type Vec4f [4]float32
@@ -24,7 +26,11 @@ func (v Vec4f) Vec4i() Vec4i {
 // Round returns an integer representation of the vector.
 // Decimals are rounded.
 func (v Vec4f) Round() Vec4i {
-	return Vec4i{int(Round(v[0])), int(Round(v[1])), int(Round(v[2])), int(Round(v[3]))}
+	return Vec4i{
+		int(math32.Round(v[0])),
+		int(math32.Round(v[1])),
+		int(math32.Round(v[2])),
+		int(math32.Round(v[3]))}
 }
 
 // Split returns the vector's components.
@@ -68,7 +74,7 @@ func (v Vec4f) XYZ() Vec3f {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec4f) Abs() Vec4f {
-	return Vec4f{Abs(v[0]), Abs(v[1]), Abs(v[2]), Abs(v[3])}
+	return Vec4f{math32.Abs(v[0]), math32.Abs(v[1]), math32.Abs(v[2]), math32.Abs(v[3])}
 }
 
 // Add performs component-wise addition.
@@ -123,7 +129,7 @@ func (v Vec4f) Normalize() Vec4f {
 
 // Length returns the vector's length.
 func (v Vec4f) Length() float32 {
-	return Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3])
+	return math32.Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2] + v[3]*v[3])
 }
 
 // SquareLength returns the vector's squared length.

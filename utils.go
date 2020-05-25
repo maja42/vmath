@@ -2,6 +2,8 @@ package vmath
 
 import (
 	"math"
+
+	"github.com/maja42/vmath/math32"
 )
 
 // Epsilon is the default epsilon value for float comparisons.
@@ -25,12 +27,12 @@ func EqualEps(a, b, epsilon float32) bool {
 		return true
 	}
 
-	diff := Abs(a - b)
+	diff := math32.Abs(a - b)
 	if a == 0 || b == 0 || diff < minNormal {
 		return diff < epsilon*minNormal
 	}
 
-	return diff/(Abs(a)+Abs(b)) < epsilon
+	return diff/(math32.Abs(a)+math32.Abs(b)) < epsilon
 }
 
 // minNormal is he smallest possible float32 number, provided that there is a 1 in front of the binary (=decimal) point.
@@ -64,7 +66,7 @@ func Clampi(v, min, max int) int {
 func Wrapf(v, min, max float32) float32 {
 	diff := max - min
 	v -= min
-	return min + v - diff*Floor(v/diff)
+	return min + v - diff*math32.Floor(v/diff)
 }
 
 // Wrapi returns the value v in the range of [min, max[ by wrapping it around.
@@ -86,15 +88,15 @@ func ToDegrees(rad float32) float32 {
 // Returns the radius, azimuth (angle on XY-plane) and inclination.
 func CartesianToSpherical(pos Vec3f) (float32, float32, float32) {
 	radius := pos.Length()
-	azimuth := Atan2(pos[1], pos[0])
-	inclination := Acos(pos[2] / radius)
+	azimuth := math32.Atan2(pos[1], pos[0])
+	inclination := math32.Acos(pos[2] / radius)
 	return radius, azimuth, inclination
 }
 
 // SphericalToCartesian converts spherical coordinates into cartesian coordinates.
 func SphericalToCartesian(radius, azimuth, inclination float32) Vec3f {
-	sinAz, cosAz := Sincos(azimuth)
-	sinInc, cosInc := Sincos(inclination)
+	sinAz, cosAz := math32.Sincos(azimuth)
+	sinInc, cosInc := math32.Sincos(inclination)
 
 	return Vec3f{
 		radius * sinInc * cosAz,
@@ -126,7 +128,7 @@ func NormalizeDegrees(deg float32) float32 {
 
 // AngleToVector returns a 2D vector with the given length and angle to the x-axis.
 func AngleToVector(rad float32, length float32) Vec2f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	vec := Vec2f{cos, sin}
 	return vec.Normalize().MulScalar(length)
 }
@@ -199,7 +201,7 @@ func IsPointOnLineEps(a, b Vec2f, point Vec2f, eps float32) bool {
 
 // PolarToCartesian2D converts length and angle into a 2D position.
 func PolarToCartesian2D(distance, rad float32) Vec2f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Vec2f{
 		cos * distance,
 		sin * distance,

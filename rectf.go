@@ -2,6 +2,8 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
 )
 
 // Rectf represents a 2D, axis-aligned rectangle.
@@ -166,12 +168,12 @@ func (r Rectf) ContainsRectf(other Rectf) bool {
 // Merge returns a rectangle that contains both smaller rectangles.
 func (r Rectf) Merge(other Rectf) Rectf {
 	min := Vec2f{
-		Min(r.Min[0], other.Min[0]),
-		Min(r.Min[1], other.Min[1]),
+		math32.Min(r.Min[0], other.Min[0]),
+		math32.Min(r.Min[1], other.Min[1]),
 	}
 	max := Vec2f{
-		Max(r.Max[0], other.Max[0]),
-		Max(r.Max[1], other.Max[1]),
+		math32.Max(r.Max[0], other.Max[0]),
+		math32.Max(r.Max[1], other.Max[1]),
 	}
 	return Rectf{min, max}
 }
@@ -202,5 +204,5 @@ func (r Rectf) SquarePointDistance(pos Vec2f) float32 {
 // If the point is contained within the rectangle, 0 is returned.
 // Otherwise, the distance between the point and the nearest edge or corner is returned.
 func (r Rectf) PointDistance(pos Vec2f) float32 {
-	return Sqrt(r.SquarePointDistance(pos))
+	return math32.Sqrt(r.SquarePointDistance(pos))
 }

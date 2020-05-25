@@ -3,6 +3,8 @@ package vmath
 import (
 	"fmt"
 	"math"
+
+	"github.com/maja42/vmath/math32"
 )
 
 type Vec3f [3]float32
@@ -25,7 +27,10 @@ func (v Vec3f) Vec3i() Vec3i {
 // Round returns an integer representation of the vector.
 // Decimals are rounded.
 func (v Vec3f) Round() Vec3i {
-	return Vec3i{int(Round(v[0])), int(Round(v[1])), int(Round(v[2]))}
+	return Vec3i{
+		int(math32.Round(v[0])),
+		int(math32.Round(v[1])),
+		int(math32.Round(v[2]))}
 }
 
 // Vec4f creates a 4D vector.
@@ -68,7 +73,7 @@ func (v Vec3f) IsOrthogonal() bool {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec3f) Abs() Vec3f {
-	return Vec3f{Abs(v[0]), Abs(v[1]), Abs(v[2])}
+	return Vec3f{math32.Abs(v[0]), math32.Abs(v[1]), math32.Abs(v[2])}
 }
 
 // Add performs component-wise addition.
@@ -123,7 +128,7 @@ func (v Vec3f) Normalize() Vec3f {
 
 // Length returns the vector's length.
 func (v Vec3f) Length() float32 {
-	return Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
+	return math32.Sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])
 }
 
 // SquareLength returns the vector's squared length.
@@ -204,9 +209,9 @@ func (v Vec3f) IsCollinearEps(other Vec3f, eps float32) bool {
 	// Note: Vectors that are nearly zero will not be reported as collinear if they are facing
 	// in different directions, even if their size falls within epsilon.
 	return v.IsParallelEps(other, eps) &&
-		Signbit(v[0]) == Signbit(other[0]) && // same x direction
-		Signbit(v[1]) == Signbit(other[1]) && // same y direction
-		Signbit(v[2]) == Signbit(other[2]) // same y direction
+		math32.Signbit(v[0]) == math32.Signbit(other[0]) && // same x direction
+		math32.Signbit(v[1]) == math32.Signbit(other[1]) && // same y direction
+		math32.Signbit(v[2]) == math32.Signbit(other[2]) // same y direction
 }
 
 // Project returns a vector representing the projection of vector v onto "other".
@@ -224,7 +229,7 @@ func (v Vec3f) Lerp(other Vec3f, t float32) Vec3f {
 func (v Vec3f) Angle(other Vec3f) float32 {
 	v = v.Normalize()
 	other = other.Normalize()
-	return Acos(v.Dot(other))
+	return math32.Acos(v.Dot(other))
 }
 
 // RotationTo returns the shortest rotation to the destination vector.
@@ -253,7 +258,7 @@ func (v Vec3f) RotationTo(dest Vec3f) Quat {
 func (v Vec3f) RotateX(origin Vec3f, rad float32) Vec3f {
 	v = v.Sub(origin) // translate to origin
 
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	p := Vec3f{
 		v[0],
 		v[1]*cos - v[2]*sin,
@@ -265,7 +270,7 @@ func (v Vec3f) RotateX(origin Vec3f, rad float32) Vec3f {
 func (v Vec3f) RotateY(origin Vec3f, rad float32) Vec3f {
 	v = v.Sub(origin) // translate to origin
 
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	p := Vec3f{
 		v[2]*sin + v[0]*cos,
 		v[1],
@@ -277,7 +282,7 @@ func (v Vec3f) RotateY(origin Vec3f, rad float32) Vec3f {
 func (v Vec3f) RotateZ(origin Vec3f, rad float32) Vec3f {
 	v = v.Sub(origin) // translate to origin
 
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	p := Vec3f{
 		v[0]*cos - v[1]*sin,
 		v[0]*sin + v[1]*cos,

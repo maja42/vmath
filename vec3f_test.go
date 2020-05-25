@@ -42,6 +42,7 @@ func TestVec3f_IsZero(t *testing.T) {
 	assert.True(t, Vec3f{0, 0, 0}.IsZero())
 	assert.False(t, Vec3f{0.0001, 0, 0}.IsZero())
 	assert.False(t, Vec3f{0, 0.0001, 0}.IsZero())
+	assert.False(t, Vec3f{0, 0, 0.0001}.IsZero())
 }
 
 func TestVec3f_AddScalar(t *testing.T) {
@@ -91,7 +92,8 @@ func TestVec3f_Equal(t *testing.T) {
 	assert.True(t, Vec3f{6, 7, 8}.Equal(Vec3f{6, 7, 8}))
 	assert.True(t, Vec3f{-4, -9, -5}.Equal(Vec3f{-4, -9, -5}))
 
-	assert.False(t, Vec3f{6, 7}.Equal(Vec3f{7, 6}))
+	assert.False(t, Vec3f{6, 7, 8}.Equal(Vec3f{7, 6, 8}))
+	assert.False(t, Vec3f{6, 7, 8}.Equal(Vec3f{6, 7, 6}))
 }
 
 func TestVec3f_IsParallel(t *testing.T) {
@@ -125,7 +127,7 @@ func TestVec3f_Lerp(t *testing.T) {
 	AssertVec3f(t, Vec3f{0.5, 0, 0}, Vec3f{-1, 0, 0}.Lerp(Vec3f{1, 0, 0}, 0.75))
 	AssertVec3f(t, Vec3f{1, 0, 0}, Vec3f{-1, 0, 0}.Lerp(Vec3f{1, 0, 0}, 1))
 
-	AssertVec3f(t, Vec3f{0, 0.5, 0.5}, Vec3f{0, 0, 1}.Lerp(Vec3f{0, 1, 0}, 0.5))
+	AssertVec3f(t, Vec3f{0, 0.3, 0.7}, Vec3f{0, 0, 1}.Lerp(Vec3f{0, 1, 0}, 0.3))
 }
 
 func TestVec3f_Mul(t *testing.T) {
@@ -149,6 +151,7 @@ func TestVec3f_Normalize(t *testing.T) {
 	AssertVec3f(t, Vec3f{-1, 0, 0}, Vec3f{-15, 0, 0}.Normalize())
 	AssertVec3f(t, Vec3f{0, -1, 0}, Vec3f{0, -54, 0}.Normalize())
 	AssertVec3f(t, Vec3f{0, 0, -1}, Vec3f{0, 0, -7}.Normalize())
+
 	AssertVec3f(t, Vec3f{0.872872, 0.436436, 0.218218}, Vec3f{12, 6, 3}.Normalize())
 	AssertVec3f(t, Vec3f{0, 0, 0}, Vec3f{0, 0, 0}.Normalize())
 }
@@ -216,7 +219,10 @@ func TestVec3f_SquareDistance(t *testing.T) {
 }
 
 func TestVec3f_SquareLength(t *testing.T) {
-	AssertFloat(t, 13, Vec3f{2, -3}.SquareLength())
+	AssertFloat(t, 16, Vec3f{4, 0, 0}.SquareLength())
+	AssertFloat(t, 16, Vec3f{0, 4, 0}.SquareLength())
+	AssertFloat(t, 16, Vec3f{0, 0, 4}.SquareLength())
+	AssertFloat(t, 29, Vec3f{2, -3, 4}.SquareLength())
 }
 
 func TestVec3f_Sub(t *testing.T) {

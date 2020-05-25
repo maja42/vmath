@@ -3,6 +3,8 @@ package vmath
 import (
 	"fmt"
 	"math"
+
+	"github.com/maja42/vmath/math32"
 )
 
 // Quat represents a Quaternion.
@@ -23,7 +25,7 @@ func IdentQuat() Quat {
 // QuatFromAxisAngle returns a quaternion representing a rotation around a given axis.
 func QuatFromAxisAngle(axis Vec3f, angle float32) Quat {
 	axis = axis.Normalize()
-	sinAngle, cosAngle := Sincos(angle * 0.5)
+	sinAngle, cosAngle := math32.Sincos(angle * 0.5)
 	return Quat{
 		cosAngle,
 		axis[0] * sinAngle,
@@ -97,7 +99,7 @@ func (q Quat) DivScalar(s float32) Quat {
 // RotateX rotates the quaternion with a given angle round its X axis.
 func (q Quat) RotateX(rad float32) Quat {
 	// Source: http://glmatrix.net/docs/module-quat.html
-	sinR, cosR := Sincos(rad * 0.5)
+	sinR, cosR := math32.Sincos(rad * 0.5)
 	return Quat{
 		q.W*cosR - q.X*sinR,
 		q.X*cosR + q.W*sinR,
@@ -109,7 +111,7 @@ func (q Quat) RotateX(rad float32) Quat {
 // RotateY rotates the quaternion with a given angle round its Y axis.
 func (q Quat) RotateY(rad float32) Quat {
 	// Source: http://glmatrix.net/docs/module-quat.html
-	sinR, cosR := Sincos(rad * 0.5)
+	sinR, cosR := math32.Sincos(rad * 0.5)
 	return Quat{
 		q.W*cosR - q.Y*sinR,
 		q.X*cosR - q.Z*sinR,
@@ -121,7 +123,7 @@ func (q Quat) RotateY(rad float32) Quat {
 // RotateZ rotates the quaternion with a given angle round its Y axis.
 func (q Quat) RotateZ(rad float32) Quat {
 	// Source: http://glmatrix.net/docs/module-quat.html
-	sinR, cosR := Sincos(rad * 0.5)
+	sinR, cosR := math32.Sincos(rad * 0.5)
 	return Quat{
 		q.W*cosR - q.Z*sinR,
 		q.X*cosR + q.Y*sinR,
@@ -147,7 +149,7 @@ func (q Quat) Conjugate() Quat {
 
 // Length returns the quaternion's length.
 func (q Quat) Length() float32 {
-	return Sqrt(q.W*q.W + q.X*q.X + q.Y*q.Y + q.Z*q.Z)
+	return math32.Sqrt(q.W*q.W + q.X*q.X + q.Y*q.Y + q.Z*q.Z)
 }
 
 // SquareLength returns the quaternion's squared length.
@@ -189,14 +191,14 @@ func (q Quat) Axis() Vec3f {
 // Angle returns the quaternion's rotation angle around its axis.
 func (q Quat) Angle() float32 {
 	q = q.Normalize()
-	return Acos(q.W) * 2
+	return math32.Acos(q.W) * 2
 }
 
 // AxisRotation returns the quaternion's rotation angle and axis.
 func (q Quat) AxisRotation() (Vec3f, float32) {
 	// Based on: http://glmatrix.net/docs/module-quat.html
 	rad := q.Angle()
-	s := Sin(rad * 0.5)
+	s := math32.Sin(rad * 0.5)
 	if s < Epsilon { // no rotation
 		return Vec3f{1, 0, 0}, rad
 	}
@@ -207,9 +209,9 @@ func (q Quat) AxisRotation() (Vec3f, float32) {
 // Axis: yaw: Z, pitch: Y, roll: X
 func QuatFromEuler(yaw, pitch, roll float32) Quat {
 	// Source: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-	sinY, cosY := Sincos(yaw * 0.5)
-	sinP, cosP := Sincos(pitch * 0.5)
-	sinR, cosR := Sincos(roll * 0.5)
+	sinY, cosY := math32.Sincos(yaw * 0.5)
+	sinP, cosP := math32.Sincos(pitch * 0.5)
+	sinR, cosR := math32.Sincos(roll * 0.5)
 	return Quat{
 		W: cosR*cosP*cosY + sinR*sinP*sinY,
 		X: sinR*cosP*cosY - cosR*sinP*sinY,
@@ -226,20 +228,20 @@ func (q Quat) ToEuler() (yaw, pitch, roll float32) {
 	// roll (x-axis rotation)
 	srcp := 2 * (q.W*q.X + q.Y*q.Z)
 	crcp := 1 - 2*(q.X*q.X+q.Y*q.Y)
-	roll = Atan2(srcp, crcp)
+	roll = math32.Atan2(srcp, crcp)
 
 	// pitch (y-axis rotation)
 	sp := 2 * (q.W*q.Y - q.Z*q.X)
-	if Abs(sp) >= 1 {
-		pitch = Copysign(math.Pi/2, sp) // use 90° if out of range
+	if math32.Abs(sp) >= 1 {
+		pitch = math32.Copysign(math.Pi/2, sp) // use 90° if out of range
 	} else {
-		pitch = Asin(sp)
+		pitch = math32.Asin(sp)
 	}
 
 	// yaw (z-axis rotation)
 	sycp := 2 * (q.W*q.Z + q.X*q.Y)
 	cycp := 1 - 2*(q.Y*q.Y+q.Z*q.Z)
-	yaw = Atan2(sycp, cycp)
+	yaw = math32.Atan2(sycp, cycp)
 
 	return
 }

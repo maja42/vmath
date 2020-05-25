@@ -1,5 +1,7 @@
 package vmath
 
+import "github.com/maja42/vmath/math32"
+
 // Ortho returns an orthographic projection matrix.
 func Ortho(left, right, bottom, top float32, near, far float32) Mat4f {
 	rl := right - left
@@ -34,7 +36,7 @@ func UnOrtho(left, right, bottom, top float32, near, far float32) Mat4f {
 // Perspective returns a perspective projection matrix.
 // The field-of-view is in radians.
 func Perspective(fovY, aspectRatio, near, far float32) Mat4f {
-	xHalf := Tan(fovY/2) * near
+	xHalf := math32.Tan(fovY/2) * near
 	yHalf := xHalf * aspectRatio
 	return Frustum(-yHalf, yHalf, -xHalf, xHalf, near, far)
 }

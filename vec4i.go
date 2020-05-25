@@ -3,6 +3,8 @@ package vmath
 import (
 	"fmt"
 	"math"
+
+	"github.com/maja42/vmath/mathi"
 )
 
 type Vec4i [4]int
@@ -62,7 +64,7 @@ func (v Vec4i) XYZ() Vec3i {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec4i) Abs() Vec4i {
-	return Vec4i{Absi(v[0]), Absi(v[1]), Absi(v[2]), Absi(v[3])}
+	return Vec4i{mathi.Abs(v[0]), mathi.Abs(v[1]), mathi.Abs(v[2]), mathi.Abs(v[3])}
 }
 
 // Add performs component-wise addition between two vectors.

@@ -3,6 +3,7 @@ package vmath
 import (
 	"testing"
 
+	"github.com/maja42/vmath/math32"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -162,9 +163,9 @@ func TestRecti_PointDistance(t *testing.T) {
 	// above
 	AssertFloat(t, float32(4), r.PointDistance(Vec2i{8, 14}))
 	// below + left
-	AssertFloat(t, Sqrt(50), r.PointDistance(Vec2i{-5, -5}))
+	AssertFloat(t, math32.Sqrt(50), r.PointDistance(Vec2i{-5, -5}))
 	// below + right
-	AssertFloat(t, Sqrt(34), r.PointDistance(Vec2i{13, -5}))
+	AssertFloat(t, math32.Sqrt(34), r.PointDistance(Vec2i{13, -5}))
 	// above + right
-	AssertFloat(t, Sqrt(37), r.PointDistance(Vec2i{16, 11}))
+	AssertFloat(t, math32.Sqrt(37), r.PointDistance(Vec2i{16, 11}))
 }

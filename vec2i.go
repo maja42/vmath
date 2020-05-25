@@ -2,6 +2,9 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
+	"github.com/maja42/vmath/mathi"
 )
 
 type Vec2i [2]int
@@ -54,7 +57,7 @@ func (v Vec2i) IsOrthogonal() bool {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec2i) Abs() Vec2i {
-	return Vec2i{Absi(v[0]), Absi(v[1])}
+	return Vec2i{mathi.Abs(v[0]), mathi.Abs(v[1])}
 }
 
 // Add performs component-wise addition between two vectors.
@@ -121,7 +124,7 @@ func (v Vec2i) DivScalarf(s float32) Vec2f {
 
 // Length returns the vector's length.
 func (v Vec2i) Length() float32 {
-	return Hypot(float32(v[0]), float32(v[1]))
+	return math32.Hypot(float32(v[0]), float32(v[1]))
 }
 
 // SquareLength returns the vector's squared length.

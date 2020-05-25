@@ -3,6 +3,8 @@ package vmath
 import (
 	"fmt"
 	"math"
+
+	"github.com/maja42/vmath/mathi"
 )
 
 type Vec3i [3]int
@@ -18,7 +20,7 @@ func (v Vec3i) Format(format string) string {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec3i) Abs() Vec3i {
-	return Vec3i{Absi(v[0]), Absi(v[1]), Absi(v[2])}
+	return Vec3i{mathi.Abs(v[0]), mathi.Abs(v[1]), mathi.Abs(v[2])}
 }
 
 // Vec2f returns a float representation of the vector.
@@ -57,6 +59,11 @@ func (v Vec3i) Z() int {
 // XY returns a 2D vector with the X and Y components.
 func (v Vec3i) XY() Vec2i {
 	return Vec2i{v[0], v[1]}
+}
+
+// IsOrthogonal returns true if the vector is parallel to the X, Y or Z axis (one of its components is zero).
+func (v Vec3i) IsOrthogonal() bool {
+	return v[0] == 0 || v[1] == 0 || v[2] == 0
 }
 
 // Add performs component-wise addition between two vectors.

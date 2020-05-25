@@ -2,6 +2,8 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
 )
 
 type Vec2f [2]float32
@@ -24,7 +26,7 @@ func (v Vec2f) Vec2i() Vec2i {
 // Round returns an integer representation of the vector.
 // Decimals are rounded.
 func (v Vec2f) Round() Vec2i {
-	return Vec2i{int(Round(v[0])), int(Round(v[1]))}
+	return Vec2i{int(math32.Round(v[0])), int(math32.Round(v[1]))}
 }
 
 // Vec3f creates a 3D vector.
@@ -61,7 +63,7 @@ func (v Vec2f) IsOrthogonal() bool {
 
 // Abs returns a vector with the components turned into absolute values.
 func (v Vec2f) Abs() Vec2f {
-	return Vec2f{Abs(v[0]), Abs(v[1])}
+	return Vec2f{math32.Abs(v[0]), math32.Abs(v[1])}
 }
 
 // Add performs component-wise addition.
@@ -116,7 +118,7 @@ func (v Vec2f) Normalize() Vec2f {
 
 // Length returns the vector's length.
 func (v Vec2f) Length() float32 {
-	return Hypot(v[0], v[1])
+	return math32.Hypot(v[0], v[1])
 }
 
 // SquareLength returns the vector's squared length.
@@ -192,8 +194,8 @@ func (v Vec2f) IsCollinearEps(other Vec2f, eps float32) bool {
 	// Note: Vectors that are nearly zero will not be reported as collinear if they are facing
 	// in different directions, even if their size falls within epsilon.
 	return EqualEps(v[0]*other[1], v[1]*other[0], eps) && // parallel
-		Signbit(v[0]) == Signbit(other[0]) && // same x direction
-		Signbit(v[1]) == Signbit(other[1]) // same y direction
+		math32.Signbit(v[0]) == math32.Signbit(other[0]) && // same x direction
+		math32.Signbit(v[1]) == math32.Signbit(other[1]) // same y direction
 }
 
 // NormalVec returns a normal vector on the 2D plane that is either on the left or right hand side.
@@ -217,13 +219,13 @@ func (v Vec2f) Lerp(other Vec2f, t float32) Vec2f {
 
 // Angle returns the angle relative to another vector.
 func (v Vec2f) Angle(other Vec2f) float32 {
-	return Atan2(other[1], other[0]) - Atan2(v[1], v[0])
+	return math32.Atan2(other[1], other[0]) - math32.Atan2(v[1], v[0])
 }
 
 // FlatAngle returns the angle of a vector in radians.
 // This is the angle between the vector and the x-axis.
 func (v Vec2f) FlatAngle() float32 {
-	return Atan2(v[1], v[0])
+	return math32.Atan2(v[1], v[0])
 }
 
 // Rotate rotates the vector on the 2D plane.

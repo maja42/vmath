@@ -2,6 +2,8 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
 )
 
 // matrices are stored in column major order
@@ -59,7 +61,7 @@ func Mat4fFromRotation(axis Vec3f, rad float32) Mat4f {
 		return Ident4f()
 	}
 	axis = axis.DivScalar(length) // normalize
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	icos := 1 - cos
 
 	return Mat4f{
@@ -185,7 +187,7 @@ func Mat4fFromScaling(scaling Vec3f) Mat4f {
 
 // Mat4fFromXRotation returns the 4x4 matrix with a rotation around the X-axis.
 func Mat4fFromXRotation(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		1, 0, 0, 0,
 		0, cos, sin, 0,
@@ -195,7 +197,7 @@ func Mat4fFromXRotation(rad float32) Mat4f {
 
 // Mat4fFromYRotation returns the 4x4 matrix with a rotation around the Y-axis.
 func Mat4fFromYRotation(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		cos, 0, -sin, 0,
 		0, 1, 0, 0,
@@ -205,7 +207,7 @@ func Mat4fFromYRotation(rad float32) Mat4f {
 
 // Mat4fFromZRotation returns the 4x4 matrix with a rotation around the Z-axis.
 func Mat4fFromZRotation(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		cos, sin, 0, 0,
 		-sin, cos, 0, 0,
@@ -552,7 +554,7 @@ func (m Mat4f) Rotation() Quat {
 
 	trace := sm11 + sm22 + sm33
 	if trace > 0 {
-		s := Sqrt(trace+1) * 2
+		s := math32.Sqrt(trace+1) * 2
 		return Quat{
 			0.25 * s,
 			(sm23 - sm32) / s,
@@ -560,7 +562,7 @@ func (m Mat4f) Rotation() Quat {
 			(sm12 - sm21) / s,
 		}
 	} else if sm11 > sm22 && sm11 > sm33 {
-		s := Sqrt(1+sm11-sm22-sm33) * 2
+		s := math32.Sqrt(1+sm11-sm22-sm33) * 2
 		return Quat{
 			(sm23 - sm32) / s,
 			0.25 * s,
@@ -568,7 +570,7 @@ func (m Mat4f) Rotation() Quat {
 			(sm31 + sm13) / s,
 		}
 	} else if sm22 > sm33 {
-		s := Sqrt(1+sm22-sm11-sm33) * 2
+		s := math32.Sqrt(1+sm22-sm11-sm33) * 2
 		return Quat{
 			(sm31 - sm13) / s,
 			(sm12 + sm21) / s,
@@ -576,7 +578,7 @@ func (m Mat4f) Rotation() Quat {
 			(sm23 + sm32) / s,
 		}
 	} else {
-		s := Sqrt(1+sm33-sm11-sm22) * 2
+		s := math32.Sqrt(1+sm33-sm11-sm22) * 2
 		return Quat{
 			(sm12 - sm21) / s,
 			(sm31 + sm13) / s,
@@ -588,7 +590,7 @@ func (m Mat4f) Rotation() Quat {
 
 // RotateX rotates the matrix around the X-axis.
 func (m Mat4f) RotateX(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		m[0], m[1], m[2], m[3],
 
@@ -608,7 +610,7 @@ func (m Mat4f) RotateX(rad float32) Mat4f {
 
 // RotateY rotates the matrix around the Y-axis.
 func (m Mat4f) RotateY(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		m[0]*cos - m[8]*sin,
 		m[1]*cos - m[9]*sin,
@@ -628,7 +630,7 @@ func (m Mat4f) RotateY(rad float32) Mat4f {
 
 // RotateZ rotates the matrix around the Z-axis.
 func (m Mat4f) RotateZ(rad float32) Mat4f {
-	sin, cos := Sincos(rad)
+	sin, cos := math32.Sincos(rad)
 	return Mat4f{
 		m[0]*cos + m[4]*sin,
 		m[1]*cos + m[5]*sin,

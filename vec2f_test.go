@@ -104,6 +104,13 @@ func TestVec2f_IsParallel(t *testing.T) {
 	assert.False(t, Vec2f{1, 1}.IsParallel(Vec2f{-1, 2}))
 }
 
+func TestVec2f_IsParallelEps(t *testing.T) {
+	assert.True(t, Vec2f{1, 1}.IsParallelEps(Vec2f{5, 5}, Epsilon))
+	assert.True(t, Vec2f{1, 1}.IsParallelEps(Vec2f{-1, -1}, Epsilon))
+	assert.True(t, Vec2f{1, 0}.IsParallelEps(Vec2f{1, 0}, Epsilon))
+	assert.False(t, Vec2f{1, 1}.IsParallelEps(Vec2f{-1, 2}, Epsilon))
+}
+
 func TestVec2f_IsCollinear(t *testing.T) {
 	assert.True(t, Vec2f{1, 1}.IsCollinear(Vec2f{5, 5}))
 	assert.False(t, Vec2f{1, 1}.IsCollinear(Vec2f{-1, -1}))

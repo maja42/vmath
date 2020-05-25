@@ -2,6 +2,9 @@ package vmath
 
 import (
 	"fmt"
+
+	"github.com/maja42/vmath/math32"
+	"github.com/maja42/vmath/mathi"
 )
 
 // Recti represents a 2D, axis-aligned rectangle.
@@ -162,12 +165,12 @@ func (r Recti) ContainsRecti(other Recti) bool {
 // Merge returns a rectangle that contains both smaller rectangles.
 func (r Recti) Merge(other Recti) Recti {
 	min := Vec2i{
-		Mini(r.Min[0], other.Min[0]),
-		Mini(r.Min[1], other.Min[1]),
+		mathi.Min(r.Min[0], other.Min[0]),
+		mathi.Min(r.Min[1], other.Min[1]),
 	}
 	max := Vec2i{
-		Maxi(r.Max[0], other.Max[0]),
-		Maxi(r.Max[1], other.Max[1]),
+		mathi.Max(r.Max[0], other.Max[0]),
+		mathi.Max(r.Max[1], other.Max[1]),
 	}
 	return Recti{min, max}
 }
@@ -198,5 +201,5 @@ func (r Recti) SquarePointDistance(pos Vec2i) int {
 // If the point is contained within the rectangle, 0 is returned.
 // Otherwise, the distance between the point and the nearest edge or corner is returned.
 func (r Recti) PointDistance(pos Vec2i) float32 {
-	return Sqrt(float32(r.SquarePointDistance(pos)))
+	return math32.Sqrt(float32(r.SquarePointDistance(pos)))
 }
