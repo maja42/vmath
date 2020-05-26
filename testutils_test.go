@@ -42,3 +42,15 @@ func AssertVec4f(t *testing.T, expected, actual Vec4f) {
 		t.Errorf("Expected: %v, was: %v; Max difference is %v, but was %v", expected, actual, delta, diff)
 	}
 }
+
+func AssertQuat(t *testing.T, expected, actual Quat) {
+	t.Helper()
+	delta := float32(eps)
+	diff := expected.Sub(actual)
+	if diff.W < -delta || diff.W > delta ||
+		diff.X < -delta || diff.X > delta ||
+		diff.Y < -delta || diff.Y > delta ||
+		diff.Z < -delta || diff.Z > delta {
+		t.Errorf("Expected: %v, was: %v; Max difference is %v, but was %v", expected, actual, delta, diff)
+	}
+}

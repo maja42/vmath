@@ -23,14 +23,29 @@ func IdentQuat() Quat {
 }
 
 // QuatFromAxisAngle returns a quaternion representing a rotation around a given axis.
-func QuatFromAxisAngle(axis Vec3f, angle float32) Quat {
+func QuatFromAxisAngle(axis Vec3f, rad float32) Quat {
 	axis = axis.Normalize()
-	sinAngle, cosAngle := math32.Sincos(angle * 0.5)
+	sinAngle, cosAngle := math32.Sincos(rad * 0.5)
 	return Quat{
 		cosAngle,
 		axis[0] * sinAngle,
 		axis[1] * sinAngle,
 		axis[2] * sinAngle,
+	}
+}
+
+// QuatFromEuler returns a quaternion based on the given euler rotations.
+// Axis: yaw: Z, pitch: Y, roll: X
+func QuatFromEuler(yaw, pitch, roll float32) Quat {
+	// Source: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
+	sinY, cosY := math32.Sincos(yaw * 0.5)
+	sinP, cosP := math32.Sincos(pitch * 0.5)
+	sinR, cosR := math32.Sincos(roll * 0.5)
+	return Quat{
+		W: cosR*cosP*cosY + sinR*sinP*sinY,
+		X: sinR*cosP*cosY - cosR*sinP*sinY,
+		Y: cosR*sinP*cosY + sinR*cosP*sinY,
+		Z: cosR*cosP*sinY - sinR*sinP*cosY,
 	}
 }
 
@@ -71,14 +86,9 @@ func (q Quat) SubScalar(s float32) Quat {
 	return Quat{q.W - s, q.X - s, q.Y - s, q.Z - s}
 }
 
-// Mul multiplies two quaternions, performing a rotation.
+// Mul performs component-wise multiplication.
 func (q Quat) Mul(other Quat) Quat {
-	return Quat{
-		(other.W * q.W) - (other.X * q.X) - (other.Y * q.Y) - (other.Z * q.Z),
-		(other.X * q.W) + (other.W * q.X) - (other.Z * q.Y) + (other.Y * q.Z),
-		(other.Y * q.W) + (other.Z * q.X) + (other.W * q.Y) - (other.X * q.Z),
-		(other.Z * q.W) - (other.Y * q.X) + (other.X * q.Y) + (other.W * q.Z),
-	}
+	return Quat{q.W * other.W, q.X * other.X, q.Y * other.Y, q.Z * other.Z}
 }
 
 // MulScalar performs component-wise scalar multiplication.
@@ -94,6 +104,16 @@ func (q Quat) Div(other Quat) Quat {
 // DivScalar performs component-wise scalar division.
 func (q Quat) DivScalar(s float32) Quat {
 	return Quat{q.W / s, q.X / s, q.Y / s, q.Z / s}
+}
+
+// Rotate multiplies two quaternions, performing a rotation.
+func (q Quat) Rotate(other Quat) Quat {
+	return Quat{
+		(other.W * q.W) - (other.X * q.X) - (other.Y * q.Y) - (other.Z * q.Z),
+		(other.X * q.W) + (other.W * q.X) - (other.Z * q.Y) + (other.Y * q.Z),
+		(other.Y * q.W) + (other.Z * q.X) + (other.W * q.Y) - (other.X * q.Z),
+		(other.Z * q.W) - (other.Y * q.X) + (other.X * q.Y) + (other.W * q.Z),
+	}
 }
 
 // RotateX rotates the quaternion with a given angle round its X axis.
@@ -138,11 +158,13 @@ func (q Quat) Dot(other Quat) float32 {
 }
 
 // Inverse returns the inverse quaternion.
+// This is the rotation around the same axis, but in the opposite direction.
 func (q Quat) Inverse() Quat {
 	return Quat{-q.W, q.X, q.Y, q.Z}
 }
 
 // Conjugate returns the conjugated quaternion.
+// This is a rotation with the same angle, but the axis is mirrored.
 func (q Quat) Conjugate() Quat {
 	return Quat{q.W, -q.X, -q.Y, -q.Z}
 }
@@ -161,29 +183,30 @@ func (q Quat) SquareLength() float32 {
 // The quaternion must be non-zero.
 func (q Quat) Normalize() Quat {
 	length := q.Length()
-	if Equalf(length, 1) { // shortcut
+	if length == 1 { // shortcut
 		return q
 	}
 	return Quat{q.W / length, q.X / length, q.Y / length, q.Z / length}
 }
 
-// Right returns the up-vector of the quaternion's coordinate system.
+// Right returns the up-vector in the quaternion's coordinate system.
 func (q Quat) Up() Vec3f {
 	return q.RotateVec(Vec3f{0, 1, 0})
 }
 
-// Forward returns the forward-vector of the quaternion's coordinate system.
+// Forward returns the forward-vector in the quaternion's coordinate system.
 func (q Quat) Forward() Vec3f {
 	return q.RotateVec(Vec3f{0, 0, -1})
 }
 
-// Right returns the right-vector of the quaternion's coordinate system.
+// Right returns the right-vector in the quaternion's coordinate system.
 func (q Quat) Right() Vec3f {
 	return q.RotateVec(Vec3f{1, 0, 0})
 }
 
 // Axis returns the quaternion's rotation axis.
 // The returned axis is not normalized.
+// If there is no rotation, the axis can be zero.
 func (q Quat) Axis() Vec3f {
 	return Vec3f{q.X, q.Y, q.Z}
 }
@@ -203,21 +226,6 @@ func (q Quat) AxisRotation() (Vec3f, float32) {
 		return Vec3f{1, 0, 0}, rad
 	}
 	return Vec3f{q.X / s, q.Y / s, q.Z / s}, rad
-}
-
-// QuatFromEuler returns a quaternion based on the given euler rotations.
-// Axis: yaw: Z, pitch: Y, roll: X
-func QuatFromEuler(yaw, pitch, roll float32) Quat {
-	// Source: https://en.wikipedia.org/wiki/Conversion_between_quaternions_and_Euler_angles
-	sinY, cosY := math32.Sincos(yaw * 0.5)
-	sinP, cosP := math32.Sincos(pitch * 0.5)
-	sinR, cosR := math32.Sincos(roll * 0.5)
-	return Quat{
-		W: cosR*cosP*cosY + sinR*sinP*sinY,
-		X: sinR*cosP*cosY - cosR*sinP*sinY,
-		Y: cosR*sinP*cosY + sinR*cosP*sinY,
-		Z: cosR*cosP*sinY - sinR*sinP*cosY,
-	}
 }
 
 // ToEuler converts the quaternion into euler rotations.
@@ -276,7 +284,7 @@ func (q Quat) RotateVec(v Vec3f) Vec3f {
 // Lerp performs a linear interpolation to another quaternion.
 // The parameter t should be in range [0, 1].
 func (q Quat) Lerp(other Quat, t float32) Quat {
-	return q.Mul(other.MulScalar(t))
+	return other.Sub(q).MulScalar(t).Add(q)
 }
 
 // Slerp performs a spherical linear interpolation to another quaternion.
